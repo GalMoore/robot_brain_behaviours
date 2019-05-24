@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="object and people tracking">
+
+	<executable package_path="robot_brain_flexbe_behaviors.object_and_people_tracking_sm" class="objectandpeopletrackingSM" />
+	<tagstring></tagstring>
+	<author>Gal Moore</author>
+	<date>Wed May 22 2019</date>
+	<description>
+		detect and track people (object) than detect and track faces.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

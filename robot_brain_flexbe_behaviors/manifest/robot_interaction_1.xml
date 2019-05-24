@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="robot_interaction_1">
+
+	<executable package_path="robot_brain_flexbe_behaviors.robot_interaction_1_sm" class="robot_interaction_1SM" />
+	<tagstring></tagstring>
+	<author>G</author>
+	<date>Fri May 24 2019</date>
+	<description>
+		interaction with start video, start obj detect, start track, and close all.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

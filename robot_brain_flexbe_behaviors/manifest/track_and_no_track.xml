@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="track and no track">
+
+	<executable package_path="robot_brain_flexbe_behaviors.track_and_no_track_sm" class="trackandnotrackSM" />
+	<tagstring></tagstring>
+	<author>galgush</author>
+	<date>Sun May 12 2019</date>
+	<description>
+		track and no track
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="numeric" name="wait_time" default="0" label="wait_time" hint="Sets the wait_time">
+			<min value="0" />
+			<max value="5" />
+		</param>
+
+	</params>
+
+
+</behavior>

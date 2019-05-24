@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Hello_Brain">
+
+	<executable package_path="robot_brain_flexbe_behaviors.hello_brain_sm" class="Hello_BrainSM" />
+	<tagstring></tagstring>
+	<author>Me</author>
+	<date>Sun May 12 2019</date>
+	<description>
+		Brain description
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="numeric" name="waiting_time" default="0" label="waiting_time" hint="Sets the waiting_time">
+			<min value="0" />
+			<max value="5" />
+		</param>
+
+	</params>
+
+
+</behavior>
