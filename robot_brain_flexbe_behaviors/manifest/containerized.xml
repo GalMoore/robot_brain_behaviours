@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="containerized">
+
+	<executable package_path="robot_brain_flexbe_behaviors.containerized_sm" class="containerizedSM" />
+	<tagstring></tagstring>
+	<author>Gal</author>
+	<date>Sun May 26 2019</date>
+	<description>
+		full inteaction in containers
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

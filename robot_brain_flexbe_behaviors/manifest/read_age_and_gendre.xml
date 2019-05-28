@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="read age and gendre">
+
+	<executable package_path="robot_brain_flexbe_behaviors.read_age_and_gendre_sm" class="readageandgendreSM" />
+	<tagstring></tagstring>
+	<author>gal</author>
+	<date>Sun May 26 2019</date>
+	<description>
+		read age and gendre
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

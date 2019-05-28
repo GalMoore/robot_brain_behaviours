@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="new_check_condition_state">
+
+	<executable package_path="robot_brain_flexbe_behaviors.new_check_condition_state_sm" class="new_check_condition_stateSM" />
+	<tagstring></tagstring>
+	<author>Gal</author>
+	<date>Sun May 26 2019</date>
+	<description>
+		new check condition state
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

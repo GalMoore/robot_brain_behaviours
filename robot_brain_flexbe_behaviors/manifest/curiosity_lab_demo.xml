@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Curiosity Lab Demo">
+
+	<executable package_path="robot_brain_flexbe_behaviors.curiosity_lab_demo_sm" class="CuriosityLabDemoSM" />
+	<tagstring></tagstring>
+	<author>Gal</author>
+	<date>Sun May 26 2019</date>
+	<description>
+		demo of basic abilities for TAU Curiosity Lab
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
