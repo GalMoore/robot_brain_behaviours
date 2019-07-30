@@ -32,7 +32,10 @@ class ListeningState(EventState):
 		# This method is called periodically while the state is active.
 		# Main purpose is to check state conditions and trigger a corresponding outcome.
 		# If no outcome is returned, the state will stay active.
-
+		# publish to listening topic that we are listening so the state machine 
+		# can wait till finished listening to move to next state
+		# WE DO THIS WITH A SUBSCRIBER STATE AND CHECK CONDITION
+		os.system("rostopic pub /is_robot_listening std_msgs/String \"data: 'listening'\" &" )
 		# if rospy.Time.now() - self._start_time > self._target_time:
 		os.system("rosrun robot_ears speech_to_text.py &")
 

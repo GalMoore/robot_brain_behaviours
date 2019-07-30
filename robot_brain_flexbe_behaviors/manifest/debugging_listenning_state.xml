@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Debugging listenning state">
+
+	<executable package_path="robot_brain_flexbe_behaviors.debugging_listenning_state_sm" class="DebugginglistenningstateSM" />
+	<tagstring>listenning state</tagstring>
+	<author>Gal Moore</author>
+	<date>Tue Jul 30 2019</date>
+	<description>
+		debug listenning state
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

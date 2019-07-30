@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="testing_speech_improvements">
+
+	<executable package_path="robot_brain_flexbe_behaviors.testing_speech_improvements_sm" class="testing_speech_improvementsSM" />
+	<tagstring></tagstring>
+	<author>Gal Moore</author>
+	<date>Wed Jul 31 2019</date>
+	<description>
+		testing speech improvements
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

@@ -8,9 +8,6 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from flexbe_states.wait_state import WaitState
-from flexbe_states.log_state import LogState
-from robot_brain_flexbe_states.take_photo_state import TakePhotoState
 from robot_brain_flexbe_states.listening_state import ListeningState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
@@ -19,21 +16,20 @@ from robot_brain_flexbe_states.listening_state import ListeningState
 
 
 '''
-Created on Sun May 12 2019
-@author: Me
+Created on Tue Jul 30 2019
+@author: Gal Moore
 '''
-class Hello_BrainSM(Behavior):
+class DebugginglistenningstateSM(Behavior):
 	'''
-	Brain description
+	debug listenning state
 	'''
 
 
 	def __init__(self):
-		super(Hello_BrainSM, self).__init__()
-		self.name = 'Hello_Brain'
+		super(DebugginglistenningstateSM, self).__init__()
+		self.name = 'Debugging listenning state'
 
 		# parameters of this behavior
-		self.add_parameter('waiting_time', 0)
 
 		# references to used behaviors
 
@@ -47,8 +43,7 @@ class Hello_BrainSM(Behavior):
 
 
 	def create(self):
-		hello = "Hello World"
-		# x:30 y:365, x:332 y:473
+		# x:30 y:365, x:232 y:368
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -58,28 +53,10 @@ class Hello_BrainSM(Behavior):
 
 
 		with _state_machine:
-			# x:131 y:60
-			OperatableStateMachine.add('waiter',
-										WaitState(wait_time=self.waiting_time),
-										transitions={'done': 'listen for input'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:633 y:55
-			OperatableStateMachine.add('printer',
-										LogState(text=hello, severity=Logger.REPORT_HINT),
-										transitions={'done': 'phototaker'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:567 y:320
-			OperatableStateMachine.add('phototaker',
-										TakePhotoState(),
-										transitions={'continue': 'finished', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:376 y:48
-			OperatableStateMachine.add('listen for input',
+			# x:286 y:127
+			OperatableStateMachine.add('listen',
 										ListeningState(),
-										transitions={'continue': 'printer', 'failed': 'failed'},
+										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 
