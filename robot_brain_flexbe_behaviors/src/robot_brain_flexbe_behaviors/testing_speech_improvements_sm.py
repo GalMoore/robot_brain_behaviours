@@ -66,11 +66,11 @@ class testing_speech_improvementsSM(Behavior):
 			# x:936 y:282
 			OperatableStateMachine.add('wait4',
 										WaitState(wait_time=3),
-										transitions={'done': 'subto'},
+										transitions={'done': 'sub_is_listen2'},
 										autonomy={'done': Autonomy.Off})
 
 			# x:913 y:34
-			OperatableStateMachine.add('is_listening',
+			OperatableStateMachine.add('sub_is_listening',
 										SubscriberState(topic='/is_robot_listening', blocking=True, clear=False),
 										transitions={'received': 'check listen or not', 'unavailable': 'check listen or not'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
@@ -79,20 +79,20 @@ class testing_speech_improvementsSM(Behavior):
 			# x:1122 y:153
 			OperatableStateMachine.add('check listen or not',
 										CheckConditionState(predicate=lambda message: message.data == "not listening"),
-										transitions={'true': 'listen2', 'false': 'is_listening'},
+										transitions={'true': 'listen2', 'false': 'sub_is_listening'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
 										remapping={'input_value': 'message'})
 
 			# x:709 y:49
 			OperatableStateMachine.add('wait2',
 										WaitState(wait_time=1),
-										transitions={'done': 'is_listening'},
+										transitions={'done': 'sub_is_listening'},
 										autonomy={'done': Autonomy.Off})
 
 			# x:522 y:205
 			OperatableStateMachine.add('chk',
 										CheckConditionState(predicate=lambda message: message.data == "not listening"),
-										transitions={'true': 'fin', 'false': 'subto'},
+										transitions={'true': 'fin', 'false': 'sub_is_listen2'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
 										remapping={'input_value': 'message'})
 
@@ -115,7 +115,7 @@ class testing_speech_improvementsSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:730 y:302
-			OperatableStateMachine.add('subto',
+			OperatableStateMachine.add('sub_is_listen2',
 										SubscriberState(topic='/is_robot_listening', blocking=True, clear=False),
 										transitions={'received': 'chk', 'unavailable': 'chk'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
