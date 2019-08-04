@@ -4,7 +4,7 @@ import os
 from flexbe_core import EventState, Logger
 
 
-class ListeningState(EventState):
+class SoundCalibState(EventState):
 	'''
 	Example for a state to demonstrate which functionality is available for state implementation.
 	This example lets the behavior wait until the given target_time has passed since the behavior has been started.
@@ -18,7 +18,7 @@ class ListeningState(EventState):
 
 	def __init__(self):
 		# Declare outcomes, input_keys, and output_keys by calling the super constructor with the corresponding arguments.
-		super(ListeningState, self).__init__(outcomes = ['continue', 'failed'])
+		super(SoundCalibState, self).__init__(outcomes = ['continue', 'failed'])
 
 		# Store state parameter for later use.
 		# self._ambience_threshold = rospy.Duration(ambience_threshold)
@@ -33,11 +33,14 @@ class ListeningState(EventState):
 		# Main purpose is to check state conditions and trigger a corresponding outcome.
 		# If no outcome is returned, the state will stay active.
 		# publish to listening topic that we are listening so the state machine 
+		
 		# can wait till finished listening to move to next state
 		# WE DO THIS WITH A SUBSCRIBER STATE AND CHECK CONDITION
-		os.system("rostopic pub /is_robot_listening std_msgs/String \"data: 'listening'\" &" )
+		# os.system("rostopic pub /is_robot_listening std_msgs/String \"data: 'listening'\" &" )
 		# if rospy.Time.now() - self._start_time > self._target_time:
-		os.system("rosrun robot_ears speech_to_text.py &")
+
+		# rosrun a ROS node that records for 3 seconds and gets average background volume
+		# os.system("rosrun robot_ears speech_to_text.py &")
 
 		return 'continue' # One of the outcomes declared above.
 
@@ -53,7 +56,7 @@ class ListeningState(EventState):
 
 		# if time_to_wait > 0:
 		# Logger.loginfo('setting ambience threshold as %.1f seconds.' % self._ambience_threshold)
-		Logger.loginfo("(not actually connected to ambience threshold input - to do)")
+		# Logger.loginfo("(not actually connected to ambience threshold input - to do)")
 		pass
 
 
