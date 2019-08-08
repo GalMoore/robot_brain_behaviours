@@ -4,6 +4,9 @@ import subprocess
 
 from flexbe_core import EventState, Logger
 import time
+from os.path import expanduser
+home = expanduser("~") + "/"
+# os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))		
 
 class MoveRobotLipsState(EventState):
 	'''
@@ -41,7 +44,7 @@ class MoveRobotLipsState(EventState):
 	def on_enter(self, userdata):
 			# #  OPEN LIPS!
 	        python_bin3 = "/usr/bin/python3"
-	        subprocess.Popen([python_bin3, "/home/intel/toibot_ws/src/ToiBot1/src/toi_bot_speakers/src/move_lips_temp.py"]).wait()
+	        subprocess.Popen([python_bin3, "{}toibot_ws/src/ToiBot1/src/toi_bot_speakers/src/move_lips_temp.py".format(home)]).wait()
 			# This method is called when the state becomes active, i.e. a transition from another state to this one is taken.
 			# It is primarily used to start actions which are associated with this state.
 
@@ -61,7 +64,7 @@ class MoveRobotLipsState(EventState):
 		# It can be used to stop possibly running processes started by on_enter.
 			# #  OPEN LIPS!
 	        python_bin3 = "/usr/bin/python3"
-	        subprocess.Popen([python_bin3, "/home/intel/toibot_ws/src/ToiBot1/src/toi_bot_speakers/src/close_lips_temp.py"]).wait()
+	        subprocess.Popen([python_bin3, "{}toibot_ws/src/ToiBot1/src/toi_bot_speakers/src/close_lips_temp.py".format(home)]).wait()
 
 
 

@@ -8,6 +8,9 @@ Created on 02/24/2015
 
 @author: Philipp Schillinger
 '''
+from os.path import expanduser
+home = expanduser("~") + "/"
+# os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))
 
 class AgeGenderCheckSpeechState(EventState):
 	'''
@@ -47,11 +50,11 @@ class AgeGenderCheckSpeechState(EventState):
 		print("talking now")
 
 		if(userdata.age>40 and userdata.gender=="Male"):
-			os.system("python3 /home/intel/catkin_ws/src/robot_voice/src/ohbot_say_function.py %s" %(str(7)))
+			os.system("python3 {}catkin_ws/src/robot_voice/src/ohbot_say_function.py {}".format(home,str(7)))
 		if(userdata.age<40 and userdata.gender=="Male"):
-			os.system("python3 /home/intel/catkin_ws/src/robot_voice/src/ohbot_say_function.py %s" %(str(8)))
+			os.system("python3 {}catkin_ws/src/robot_voice/src/ohbot_say_function.py {}".format(home,str(8)))
 		if(userdata.gender=="Female"):
-			os.system("python3 /home/intel/catkin_ws/src/robot_voice/src/ohbot_say_function.py %s" %(str(9)))
+			os.system("python3 {}catkin_ws/src/robot_voice/src/ohbot_say_function.py {}".format(home,str(9)))
 
 		return self._outcome
 		

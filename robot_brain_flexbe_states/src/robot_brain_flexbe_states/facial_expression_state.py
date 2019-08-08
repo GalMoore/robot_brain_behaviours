@@ -2,6 +2,9 @@
 import rospy
 import os
 from flexbe_core import EventState, Logger
+from os.path import expanduser
+home = expanduser("~") + "/"
+# os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))
 
 
 class FacialExpressionState(EventState):
@@ -50,7 +53,7 @@ class FacialExpressionState(EventState):
 		# 	Logger.loginfo('Need to wait for %.1f seconds.' % time_to_wait)
 		Logger.loginfo("entering FacialExpressionState")
 		print("making face now")
-		os.system("python3 /home/intel/catkin_ws/src/robot_face/src/pick_facial_expression.py %s" %(str(self._expression_num)))
+		os.system("python3 {}catkin_ws/src/robot_face/src/pick_facial_expression.py {}".format(home,str(self._expression_num)))
 		pass
 
 

@@ -4,6 +4,10 @@ import datetime
 from flexbe_core import EventState, Logger
 import cv2
 
+from os.path import expanduser
+home = expanduser("~") + "/"
+# os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))
+
 class TakePhotoState(EventState):
 	'''
 	takes a photo of user! 
@@ -56,7 +60,7 @@ class TakePhotoState(EventState):
 		        break
 		    elif k%256 == 32:
 		        # SPACE pressed
-		        img_name = "/home/intel/Desktop/opencv_frame_{}.png".format(img_counter)
+		        img_name = "{}Desktop/opencv_frame_{}.png".format(home,img_counter)
 		        cv2.imwrite(img_name, frame)
 		        print("{} written!".format(img_name))
 		        img_counter += 1
