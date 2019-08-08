@@ -4,7 +4,9 @@ import os
 from flexbe_core import EventState, Logger
 import subprocess
 import time 
-# import rospy		
+# import rospy	
+
+
 class StopSpeechToText(EventState):
 	'''
 	Example for a state to demonstrate which functionality is available for state implementation.

@@ -343,7 +343,7 @@ class CuriosityLabDemoSM(Behavior):
 			# x:372 y:534
 			OperatableStateMachine.add('stop video detects and tracks',
 										_sm_stop_video_detects_and_tracks_4,
-										transitions={'finished': 'finished', 'failed': 'failed'},
+										transitions={'finished': 'launch video stream and object detector', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:540 y:64
