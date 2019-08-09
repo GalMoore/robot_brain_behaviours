@@ -7,7 +7,6 @@ import time
 import os
 from os.path import expanduser
 home = expanduser("~") + "/"
-# os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))
 
 class TalkState(EventState):
 	'''
@@ -45,7 +44,6 @@ class TalkState(EventState):
 
 	def on_enter(self, userdata):
 		print("talking now")
-	  # os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))
 
 		os.system("python3 {}catkin_ws/src/robot_voice/src/ohbot_say_function.py {}".format(home,str(self._sentence)))
 

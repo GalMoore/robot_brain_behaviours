@@ -10,7 +10,6 @@ Created on 02/24/2015
 '''
 from os.path import expanduser
 home = expanduser("~") + "/"
-# os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))
 
 class AgeGenderCheckSpeechState(EventState):
 	'''
@@ -41,7 +40,6 @@ class AgeGenderCheckSpeechState(EventState):
 	def execute(self, userdata):
 		'''Execute this state'''
 
-
 		print("age: " +str(userdata.age))
 		print("gender: " +str(userdata.gender))
 		Logger.logwarn("age: " +str(userdata.age))
@@ -65,21 +63,3 @@ class AgeGenderCheckSpeechState(EventState):
 		# Logger.logwarn("age: " +str(self._age))
 		# Logger.logwarn("gender: " +str(self._gender))
 		pass
-		# print(" ")
-		# Logger.logwarn("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].gender))
-		# print("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].gender))
-		# Logger.logwarn("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].age))
-		# print("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].age))
-		# try:
-		# 	# self._outcome = 'found' if self._predicate(userdata.input_value) else 'not found'
-		# 	self._outcome = 'found' if self._key_word in userdata.input_value.objects[0].gender else 'not_found'
-		# 	if self._key_word in userdata.input_value:
-
-		# 		print("found the word " + self._key_word)
-		# 		Logger.logwarn("found the word " + self._key_word)
-		# 	else:
-		# 		print("did not find the word " + self._key_word)
-		# 		Logger.logwarn("didn't find the word " + self._key_word)
-
-		# except Exception as e:
-		# 	Logger.logwarn('Failed to execute condition function!\n%s' % str(e))

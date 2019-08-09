@@ -69,15 +69,6 @@ class StopObjectDetectAndTrack(EventState):
 
 
 	def on_exit(self, userdata):
-		# os.system("python3 /home/gal/catkin_ws/src/robot_face/src/headturn.py %s" %(str(5)))
-		# time.sleep(1)
-		# os.system("python3 /home/gal/catkin_ws/src/robot_face/src/headnod.py %s" %(str(5)))
-		# time.sleep(1)
-		# os.system("python3 /home/gal/catkin_ws/src/robot_face/src/eyes.py %s" %(str(5))) 
-		# This method is called when an outcome is returned and another state gets active.
-		# It can be used to stop possibly running processes started by on_enter.
-
-
 
 		pass # Nothing to do in this example.
 

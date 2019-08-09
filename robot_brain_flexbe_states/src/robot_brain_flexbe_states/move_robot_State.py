@@ -6,7 +6,6 @@ from flexbe_core import EventState, Logger
 import time
 from os.path import expanduser
 home = expanduser("~") + "/"
-# os.system("python3 {}catkin_ws/src/robot_face/src/headturn.py {}".format(home,str(5)))		
 
 class MoveRobotLipsState(EventState):
 	'''

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="check_new_face_Server">
+
+	<executable package_path="robot_brain_flexbe_behaviors.check_new_face_server_sm" class="check_new_face_ServerSM" />
+	<tagstring>new face server</tagstring>
+	<author>Gal Moore</author>
+	<date>Fri Aug 09 2019</date>
+	<description>
+		new face server
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
