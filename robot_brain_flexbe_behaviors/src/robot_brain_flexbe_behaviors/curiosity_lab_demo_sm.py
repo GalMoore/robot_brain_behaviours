@@ -11,6 +11,7 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from robot_brain_flexbe_states.launch_video_stream_state import LaunchVideoStream
 from robot_brain_flexbe_states.talk_state import TalkState
 from robot_brain_flexbe_states.launch_obj_detect_and_track import LaunchObjDetectAndTrack
+from robot_brain_flexbe_states.launch_face_server import LaunchFaceServer
 from robot_brain_flexbe_states.stop_object_detect_and_track import StopObjectDetectAndTrack
 from robot_brain_flexbe_states.stop_face_detect_and_track import StopFaceDetectAndTrack
 from robot_brain_flexbe_states.stop_camera_stream import StopCameraStream
@@ -328,6 +329,12 @@ class CuriosityLabDemoSM(Behavior):
 			# x:647 y:168
 			OperatableStateMachine.add('launch obj',
 										LaunchObjDetectAndTrack(),
+										transitions={'continue': 'launch face server', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:649 y:298
+			OperatableStateMachine.add('launch face server',
+										LaunchFaceServer(),
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
