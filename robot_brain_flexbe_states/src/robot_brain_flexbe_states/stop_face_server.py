@@ -28,35 +28,16 @@ class StopFaceServer(EventState):
 		# Thus, we cannot save the starting time now and will do so later.
 		self._start_time = None
 
-
 	def execute(self, userdata):
-		# This method is called periodically while the state is active.
-		# Main purpose is to check state conditions and trigger a corresponding outcome.
-
-		# if rospy.Time.now() - self._start_time > self._target_time:
 		return 'continue' # One of the outcomes declared above.
 		
-
 	def on_enter(self, userdata):
-		# This method is called when the state becomes active, i.e. a transition from another state to this one is taken.
-		# It is primarily used to start actions which are associated with this state.
 		os.system("pgrep -f face_motor_server.py")
 		os.system("pkill -9 -f face_motor_server.py")
-
-		# The following code is just for illustrating how the behavior logger works.
-		# Text logged by the behavior logger is sent to the operator and displayed in the GUI.
 		Logger.loginfo('stopping the face motor server')
 
-
-
 	def on_exit(self, userdata):
-		# This method is called when an outcome is returned and another state gets active.
-		# It can be used to stop possibly running processes started by on_enter.
-		# Logger.loginfo('leaving and logging')
-		# os.system("python /home/gal/Desktop/stop_object_detection.py")
-		# os.system("python /home/gal/Desktop/stop_object_tracking.py")
 		pass # Nothing to do in this example.
-
 
 	def on_start(self):
 		pass

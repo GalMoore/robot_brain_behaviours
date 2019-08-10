@@ -28,7 +28,6 @@ class GalSubscriberState(EventState):
 
 	'''
 
-
 	def __init__(self, topic, blocking = True, clear = False):
 		'''
 		Constructor
@@ -50,7 +49,7 @@ class GalSubscriberState(EventState):
 		else:
 			Logger.logwarn('Topic %s for state %s not yet available.\nFound: %s\nWill try again when entering the state...' % (self._topic, self.name, str(msg_topic)))
 		
-		
+
 	def execute(self, userdata):
 		'''
 		Execute this state
@@ -60,14 +59,11 @@ class GalSubscriberState(EventState):
 			return 'unavailable'
 
 		if self._sub.has_msg(self._topic) or not self._blocking:
-
-
 			userdata.message = self._sub.get_last_msg(self._topic)
 			Logger.loginfo(userdata.message)
 			self._sub.remove_last_msg(self._topic)
 			return 'tracking'
 			
-	
 	def on_enter(self, userdata):
 		if not self._connected:
 			(msg_path, msg_topic, fn) = rostopic.get_topic_type(self._topic)
@@ -81,7 +77,6 @@ class GalSubscriberState(EventState):
 
 		if self._connected and self._clear and self._sub.has_msg(self._topic):
 			self._sub.remove_last_msg(self._topic)
-
 
 	def _get_msg_from_path(self, msg_path):
 		msg_import = msg_path.split('/')

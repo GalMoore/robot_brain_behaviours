@@ -24,7 +24,6 @@ class WordCheckingState(EventState):
 	
 	'''
 
-
 	def __init__(self,key_word):
 		'''Constructor'''
 		super(WordCheckingState, self).__init__(outcomes=['found', 'not_found'],
@@ -34,13 +33,11 @@ class WordCheckingState(EventState):
 		# self._message_location = message_location
 		self._outcome = 'not_found'
 		
-		
 	def execute(self, userdata):
 		'''Execute this state'''
 
 		return self._outcome
 		
-	
 	def on_enter(self, userdata):
 		try:
 			# self._outcome = 'found' if self._predicate(userdata.input_value) else 'not found'

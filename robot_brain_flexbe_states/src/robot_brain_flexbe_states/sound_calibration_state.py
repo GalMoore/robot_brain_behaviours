@@ -20,14 +20,6 @@ class SoundCalibState(EventState):
 		# Declare outcomes, input_keys, and output_keys by calling the super constructor with the corresponding arguments.
 		super(SoundCalibState, self).__init__(outcomes = ['continue', 'failed'])
 
-		# Store state parameter for later use.
-		# self._ambience_threshold = rospy.Duration(ambience_threshold)
-
-		# The constructor is called when building the state machine, not when actually starting the behavior.
-		# Thus, we cannot save the starting time now and will do so later.
-		# self._start_time = None
-
-
 	def execute(self, userdata):
 		# This method is called periodically while the state is active.
 		# Main purpose is to check state conditions and trigger a corresponding outcome.

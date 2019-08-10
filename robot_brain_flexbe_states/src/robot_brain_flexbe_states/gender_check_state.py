@@ -24,7 +24,6 @@ class AgeGenderCheckingState(EventState):
 	
 	'''
 
-
 	def __init__(self):
 		'''Constructor'''
 		super(AgeGenderCheckingState, self).__init__(outcomes=['found', 'not_found'],
@@ -34,30 +33,15 @@ class AgeGenderCheckingState(EventState):
 		# self._message_location = message_location
 		self._outcome = 'not_found'
 		
-		
 	def execute(self, userdata):
 		'''Execute this state'''
 		userdata.age = userdata.input_value.objects[0].age
 		userdata.gender = userdata.input_value.objects[0].gender
 		return self._outcome
 		
-	
 	def on_enter(self, userdata):
 		print(" ")
 		Logger.logwarn("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].gender))
 		print("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].gender))
 		Logger.logwarn("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].age))
 		print("userdata.input_value.objects[0].gender is: " + str(userdata.input_value.objects[0].age))
-		# try:
-		# 	# self._outcome = 'found' if self._predicate(userdata.input_value) else 'not found'
-		# 	self._outcome = 'found' if self._key_word in userdata.input_value.objects[0].gender else 'not_found'
-		# 	if self._key_word in userdata.input_value:
-
-		# 		print("found the word " + self._key_word)
-		# 		Logger.logwarn("found the word " + self._key_word)
-		# 	else:
-		# 		print("did not find the word " + self._key_word)
-		# 		Logger.logwarn("didn't find the word " + self._key_word)
-
-		# except Exception as e:
-		# 	Logger.logwarn('Failed to execute condition function!\n%s' % str(e))
