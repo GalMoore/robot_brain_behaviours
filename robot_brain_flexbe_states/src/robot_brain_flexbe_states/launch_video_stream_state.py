@@ -17,18 +17,22 @@ class LaunchVideoStream(EventState):
 
 	'''
 
-	def __init__(self):
+	def __init__(self,vid_input_num):
 		# Declare outcomes, input_keys, and output_keys by calling the super constructor with the corresponding arguments.
 		super(LaunchVideoStream, self).__init__(outcomes = ['continue', 'failed'])
 		self._start_time = None
+		self._vid_input_num = vid_input_num
 
 	def execute(self, userdata):
 		print("executing")
 		return 'continue' # One of the outcomes declared above.
 
 	def on_enter(self, userdata):
+		# roslaunch video_stream_opencv camera.launch video_stream_provider:=0
+
 		Logger.loginfo('entered state launch video stream')
-		os.system("roslaunch video_stream_opencv camera.launch &")
+		os.system("roslaunch video_stream_opencv camera.launch video_stream_provider:={} &".format(self._vid_input_num))
+
 		Logger.loginfo('launched video stream (topic publishing video)')
 
 	def on_exit(self, userdata):

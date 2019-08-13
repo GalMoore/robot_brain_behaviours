@@ -316,7 +316,7 @@ class CuriosityLabDemoSM(Behavior):
 		with _sm_launch_video_stream_and_object_detector_5:
 			# x:120 y:76
 			OperatableStateMachine.add('video stream',
-										LaunchVideoStream(),
+										LaunchVideoStream(vid_input_num=1),
 										transitions={'continue': 'say launch obj', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
