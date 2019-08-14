@@ -39,16 +39,21 @@ class WordCheckingState(EventState):
 		return self._outcome
 		
 	def on_enter(self, userdata):
-		try:
+		try:	
+			self._key_word = self._key_word.lower()
+			
+
 			# self._outcome = 'found' if self._predicate(userdata.input_value) else 'not found'
-			self._outcome = 'found' if self._key_word in userdata.input_value.query else 'not_found'
-			if self._key_word in userdata.input_value.query:
+			Logger.logwarn("input message from subscriber: " + userdata.input_value.query.lower())
+			Logger.logwarn("im looking through last phrase for the word: " + self._key_word)
+			self._outcome = 'found' if self._key_word in userdata.input_value.query.lower() else 'not_found'
+			if self._key_word in userdata.input_value.query.lower():
 
 				print("found the word " + self._key_word)
 				Logger.logwarn("found the word " + self._key_word)
 			else:
 				print("did not find the word " + self._key_word)
-				Logger.logwarn("didn't find the word " + self._key_word)
+				Logger.logwarn("didn't find the word " + self._key_word + " only got this: " + userdata.input_value.query.lower())
 
 		except Exception as e:
 			Logger.logwarn('Failed to execute condition function!\n%s' % str(e))

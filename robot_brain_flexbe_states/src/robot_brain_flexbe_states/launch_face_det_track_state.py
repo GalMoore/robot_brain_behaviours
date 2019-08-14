@@ -41,5 +41,9 @@ class FaceDetTrack(EventState):
 		self._start_time = rospy.Time.now()
 
 	def on_stop(self):
+		os.system("rosnode kill pipeline_with_params")
+		Logger.loginfo('stopping object detection')
+		os.system("rosnode kill robot_face_tracking_from_vino")
+		Logger.loginfo("stop tracking")
 		pass # Nothing to do in this example.
 		

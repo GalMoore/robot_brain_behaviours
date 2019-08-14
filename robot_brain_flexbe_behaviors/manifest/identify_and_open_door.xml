@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Identify_and_open_door">
+
+	<executable package_path="robot_brain_flexbe_behaviors.identify_and_open_door_sm" class="Identify_and_open_doorSM" />
+	<tagstring>face recognition and door oen</tagstring>
+	<author>Gal Moore</author>
+	<date>Wed Aug 14 2019</date>
+	<description>
+		open day through face recognition
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
