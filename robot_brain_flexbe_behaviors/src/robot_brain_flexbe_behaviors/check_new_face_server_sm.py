@@ -60,7 +60,7 @@ class check_new_face_ServerSM(Behavior):
 
 
 		with _state_machine:
-			# x:91 y:42
+			# x:80 y:113
 			OperatableStateMachine.add('video',
 										LaunchVideoStream(vid_input_num=1),
 										transitions={'continue': 'w', 'failed': 'failed'},

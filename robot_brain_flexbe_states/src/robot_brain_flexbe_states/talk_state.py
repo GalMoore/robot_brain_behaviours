@@ -32,6 +32,7 @@ class TalkState(EventState):
 	def on_enter(self, userdata):
 		print("talking now")
 		os.system("python3 {}catkin_ws/src/robot_voice/src/ohbot_say_function.py {}".format(home,str(self._sentence)))
+		time.sleep(0.2)
 
 	def on_exit(self, userdata):
 		Logger.loginfo('finished talking')

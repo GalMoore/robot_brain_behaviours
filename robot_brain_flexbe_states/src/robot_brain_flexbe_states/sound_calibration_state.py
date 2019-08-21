@@ -2,6 +2,8 @@
 import rospy
 import os
 from flexbe_core import EventState, Logger
+from std_msgs.msg import String, Int16
+import rospy
 
 
 class SoundCalibState(EventState):
@@ -16,43 +18,28 @@ class SoundCalibState(EventState):
 
 	'''
 
-	def __init__(self):
+	def __init__(self,length_of_calibration):
 		# Declare outcomes, input_keys, and output_keys by calling the super constructor with the corresponding arguments.
 		super(SoundCalibState, self).__init__(outcomes = ['continue', 'failed'])
+		self.length = length_of_calibration
+	
+	# def get_avg_callback(self, data):
+	# 		Logger.loginfo(data)
 
 	def execute(self, userdata):
-		# This method is called periodically while the state is active.
-		# Main purpose is to check state conditions and trigger a corresponding outcome.
-		# If no outcome is returned, the state will stay active.
-		# publish to listening topic that we are listening so the state machine 
-		
-		# can wait till finished listening to move to next state
-		# WE DO THIS WITH A SUBSCRIBER STATE AND CHECK CONDITION
-		# os.system("rostopic pub /is_robot_listening std_msgs/String \"data: 'listening'\" &" )
-		# if rospy.Time.now() - self._start_time > self._target_time:
+		os.system("rostopic pub /avg_ambience_vol std_msgs/Int16 \"data: 0\" &") # does this help get the topic started?
+		os.system("rosrun robot_ears sound_calibration_node.py {}".format(self.length))
+		Logger.loginfo("rosrun robot_ears sound_calibration_node.py {}".format(self.length))
+		Logger.loginfo("finished calib")
 
-		# rosrun a ROS node that records for 3 seconds and gets average background volume
-		# os.system("rosrun robot_ears speech_to_text.py &")
+		# rospy.Subscriber('/avg_ambience_vol', self.get_avg_callback)
+
+
 
 		return 'continue' # One of the outcomes declared above.
 
-
 	def on_enter(self, userdata):
-		# This method is called when the state becomes active, i.e. a transition from another state to this one is taken.
-		# It is primarily used to start actions which are associated with this state.
-
-		# The following code is just for illustrating how the behavior logger works.
-		# Text logged by the behavior logger is sent to the operator and displayed in the GUI.
-
-		# time_to_wait = (self._target_time - (rospy.Time.now() - self._start_time)).to_sec()
-
-		# if time_to_wait > 0:
-		# Logger.loginfo('setting ambience threshold as %.1f seconds.' % self._ambience_threshold)
-		# Logger.loginfo("(not actually connected to ambience threshold input - to do)")
 		pass
-
-
-
 
 	def on_exit(self, userdata):
 		# This method is called when an outcome is returned and another state gets active.
@@ -61,19 +48,5 @@ class SoundCalibState(EventState):
 		pass # Nothing to do in this example.
 
 
-	def on_start(self):
-		pass
-		# This method is called when the behavior is started.
-		# If possible, it is generally better to initialize used resources in the constructor
-		# because if anything failed, the behavior would not even be started.
-
-		# In this example, we use this event to set the correct start time.
-		# self._start_time = rospy.Time.now()
 
 
-	def on_stop(self):
-		# This method is called whenever the behavior stops execution, also if it is cancelled.
-		# Use this event to clean up things like claimed resources.
-
-		pass # Nothing to do in this example.
-		

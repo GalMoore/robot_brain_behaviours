@@ -18,16 +18,20 @@ class ListeningState(EventState):
 
 	def __init__(self):
 		# Declare outcomes, input_keys, and output_keys by calling the super constructor with the corresponding arguments.
-		super(ListeningState, self).__init__(outcomes = ['continue', 'failed'])
+		super(ListeningState, self).__init__(outcomes = ['continue', 'failed'], input_keys=['input_value'])
 
 	def execute(self, userdata):
-		os.system("rostopic pub /is_robot_listening std_msgs/String \"data: 'listening'\" &" )
-		os.system("rosrun robot_ears speech_to_text.py &")
+		#os.system("rosrun robot_ears pu_one_msg_stt.py &" )
+		os.system("rosrun robot_ears speech_to_text.py {}".format(userdata.input_value.data))
 		return 'continue' # One of the outcomes declared above.
 
 	def on_enter(self, userdata):
-		Logger.loginfo("(not actually connected to ambience threshold input - to do)")
+		# Logger.loginfo("(not actually connected to ambience threshold input - to do)")
+		Logger.loginfo("starting to record user input voice wih calib average vol found of : " + str(userdata.input_value.data))
+		# Logger.logwarn("rosrun robot_ears speech_to_text.py {} &".format(userdata.input_value.data))
+
 		pass
+
 
 	def on_exit(self, userdata):
 		Logger.loginfo('leaving listening state')

@@ -24,7 +24,7 @@ class LaunchObjDetectAndTrack(EventState):
 
 
 	def execute(self, userdata):
-		print("executing")
+		# print("executing")
 		# if rospy.Time.now() - self._start_time > self._target_time:
 		return 'continue' # One of the outcomes declared above.
 		
@@ -32,6 +32,7 @@ class LaunchObjDetectAndTrack(EventState):
 		os.system("roslaunch vino_launch pipeline_object_oss.launch &")
 		Logger.loginfo('launched object detection')
 		os.system("rosrun robot_tracking object_Tracking.py &")
+		time.sleep(3)
 		Logger.loginfo("start tracking")
 
 	def on_exit(self, userdata):

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="toilab interaction">
+
+	<executable package_path="robot_brain_flexbe_behaviors.toilab_interaction_sm" class="toilabinteractionSM" />
+	<tagstring></tagstring>
+	<author>Gal Moore</author>
+	<date>Thu Aug 15 2019</date>
+	<description>
+		full toilab interaction August 2019
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

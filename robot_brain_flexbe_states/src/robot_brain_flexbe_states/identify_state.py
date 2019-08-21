@@ -24,14 +24,15 @@ class IdentifyState(EventState):
 		# self._start_time = None
 
 	def execute(self, userdata):
+		os.system("rosrun robot_identify identify_node.py &")
+		Logger.loginfo('looking for familiar faces to identify')
+		Logger.loginfo('publishing found face names to /identified_people_string_name')
 		# print("executing")
 		# if rospy.Time.now() - self._start_time > self._target_time:
 		return 'continue' # One of the outcomes declared above.
 		
 	def on_enter(self, userdata):
-		os.system("rosrun robot_identify identify_node.py &")
-		Logger.loginfo('looking for familiar faces to identify')
-		Logger.loginfo('publishing found face names to /identified_people_string_name')
+		pass
 		# os.system("rosrun robot_tracking face_tracking_from_vino.py &")
 		# Logger.loginfo("start tracking")
 

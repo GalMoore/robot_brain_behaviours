@@ -24,6 +24,7 @@ from robot_brain_flexbe_states.facial_expression_state import FacialExpressionSt
 from robot_brain_flexbe_states.listening_state import ListeningState
 from robot_brain_flexbe_states.gender_check_state import AgeGenderCheckingState
 from robot_brain_flexbe_states.check_what_to_stay_State import AgeGenderCheckSpeechState
+from robot_brain_flexbe_states.sound_calibration_state import SoundCalibState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -138,49 +139,44 @@ class CuriosityLabDemoSM(Behavior):
 		_sm_guess_age_interaction_1 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		with _sm_guess_age_interaction_1:
-			# x:148 y:55
+			# x:27 y:84
 			OperatableStateMachine.add('smile',
 										FacialExpressionState(expression_num=1),
 										transitions={'continue': 'wait2', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:374 y:56
+			# x:210 y:70
 			OperatableStateMachine.add('wait2',
 										WaitState(wait_time=2),
 										transitions={'done': 'blink'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:568 y:27
+			# x:329 y:43
 			OperatableStateMachine.add('blink',
 										FacialExpressionState(expression_num=2),
 										transitions={'continue': 'welcome whats your name', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:850 y:31
+			# x:498 y:19
 			OperatableStateMachine.add('welcome whats your name',
 										TalkState(sentence_number=1),
-										transitions={'continue': 'wait', 'failed': 'failed'},
+										transitions={'continue': 'calib1', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:1111 y:27
-			OperatableStateMachine.add('wait',
-										WaitState(wait_time=1),
-										transitions={'done': 'listenuserinput'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:859 y:251
+			# x:1089 y:151
 			OperatableStateMachine.add('welcome',
 										TalkState(sentence_number=2),
 										transitions={'continue': 'wait till finished talking', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:1343 y:273
+			# x:1035 y:254
 			OperatableStateMachine.add('user input please take photo',
 										ListeningState(),
 										transitions={'continue': 'wait 1 second', 'failed': 'wait 1 second'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'input_value': 'message'})
 
-			# x:1108 y:282
+			# x:1286 y:154
 			OperatableStateMachine.add('wait till finished talking',
 										WaitState(wait_time=1),
 										transitions={'done': 'user input please take photo'},
@@ -218,31 +214,45 @@ class CuriosityLabDemoSM(Behavior):
 										transitions={'done': 'got permission'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:1328 y:26
+			# x:1095 y:14
 			OperatableStateMachine.add('listenuserinput',
 										ListeningState(),
 										transitions={'continue': 'waitwait', 'failed': 'waitwait'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'input_value': 'message'})
 
-			# x:954 y:152
+			# x:1296 y:12
 			OperatableStateMachine.add('waitwait',
 										WaitState(wait_time=1),
 										transitions={'done': 'substate'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:1144 y:147
+			# x:1401 y:16
 			OperatableStateMachine.add('substate',
 										SubscriberState(topic='/is_robot_listening', blocking=True, clear=False),
 										transitions={'received': 'chekcont', 'unavailable': 'chekcont'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
+										remapping={'message': 'message_listen'})
 
-			# x:1343 y:141
+			# x:839 y:94
 			OperatableStateMachine.add('chekcont',
 										CheckConditionState(predicate=lambda message: message.data == "not listening"),
 										transitions={'true': 'welcome', 'false': 'substate'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
-										remapping={'input_value': 'message'})
+										remapping={'input_value': 'message_listen'})
+
+			# x:716 y:13
+			OperatableStateMachine.add('calib1',
+										SoundCalibState(length_of_calibration=60),
+										transitions={'continue': 'sub5', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:921 y:13
+			OperatableStateMachine.add('sub5',
+										SubscriberState(topic='/avg_ambience_vol', blocking=True, clear=False),
+										transitions={'received': 'listenuserinput', 'unavailable': 'failed'},
+										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
+										remapping={'message': 'message'})
 
 
 		# x:555 y:314, x:343 y:251

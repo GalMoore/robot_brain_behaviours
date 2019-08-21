@@ -42,8 +42,8 @@ class LaunchFaceServer(EventState):
 		pass
 
 	def on_stop(self):
-		os.system("pgrep -f face_motor_server.py")
-		os.system("pkill -9 -f face_motor_server.py")
-		Logger.loginfo('stopping the face motor server')
+		#os.system("pgrep -f face_motor_server.py")
+		#os.system("pkill -9 -f face_motor_server.py")
+		Logger.loginfo('on_stop stopping the face motor server')
 		pass # Nothing to do in this example.
 		

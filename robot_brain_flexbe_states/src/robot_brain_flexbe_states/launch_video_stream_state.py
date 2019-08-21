@@ -46,6 +46,6 @@ class LaunchVideoStream(EventState):
 
 	def on_stop(self):
 		os.system("rosnode kill camera/camera_stream")
-		Logger.loginfo("stop video stream")
+		Logger.loginfo(" on_stop stop video stream")
 		pass # Nothing to do in this example.
 		
