@@ -14,6 +14,7 @@ from robot_brain_flexbe_states.listening_state import ListeningState
 from robot_brain_flexbe_states.word_check_state import WordCheckingState
 from robot_brain_flexbe_states.log_input_data import LogTopicMessage
 from flexbe_states.log_state import LogState
+from robot_brain_flexbe_states.launch_arduino_led import LaunchArduinoLed
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -58,10 +59,10 @@ class figure_out_calib_sound_listenSM(Behavior):
 
 
 		with _state_machine:
-			# x:95 y:50
-			OperatableStateMachine.add('calib',
-										SoundCalibState(length_of_calibration=60),
-										transitions={'continue': 'sub1', 'failed': 'failed'},
+			# x:47 y:27
+			OperatableStateMachine.add('arduino led',
+										LaunchArduinoLed(),
+										transitions={'continue': 'calib', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:331 y:18
@@ -71,41 +72,41 @@ class figure_out_calib_sound_listenSM(Behavior):
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'vol'})
 
-			# x:561 y:199
+			# x:722 y:23
 			OperatableStateMachine.add('listen',
 										ListeningState(),
 										transitions={'continue': 'text', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'input_value': 'vol'})
 
-			# x:708 y:107
+			# x:885 y:357
 			OperatableStateMachine.add('calib2',
-										SoundCalibState(length_of_calibration=120),
+										SoundCalibState(length_of_calibration=20),
 										transitions={'continue': 'sub2', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:963 y:137
+			# x:1091 y:395
 			OperatableStateMachine.add('sub2',
 										SubscriberState(topic='/avg_ambience_vol', blocking=True, clear=False),
 										transitions={'received': 'listen2', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'vol'})
 
-			# x:843 y:295
+			# x:1091 y:237
 			OperatableStateMachine.add('listen2',
 										ListeningState(),
-										transitions={'continue': 'finished', 'failed': 'failed'},
+										transitions={'continue': 'again sub?', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'input_value': 'vol'})
 
-			# x:609 y:386
+			# x:962 y:41
 			OperatableStateMachine.add('text',
 										SubscriberState(topic='/stt_topic', blocking=True, clear=False),
 										transitions={'received': 'check text', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'message'})
 
-			# x:744 y:514
+			# x:701 y:245
 			OperatableStateMachine.add('check text',
 										WordCheckingState(key_word="again"),
 										transitions={'found': 'calib2', 'not_found': 'failed'},
@@ -124,6 +125,19 @@ class figure_out_calib_sound_listenSM(Behavior):
 										LogState(text="Sub1 NAVAILABLE", severity=Logger.REPORT_HINT),
 										transitions={'done': 'sub1'},
 										autonomy={'done': Autonomy.Off})
+
+			# x:958 y:136
+			OperatableStateMachine.add('again sub?',
+										SubscriberState(topic='/stt_topic', blocking=True, clear=False),
+										transitions={'received': 'check text', 'unavailable': 'failed'},
+										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
+										remapping={'message': 'message'})
+
+			# x:154 y:89
+			OperatableStateMachine.add('calib',
+										SoundCalibState(length_of_calibration=20),
+										transitions={'continue': 'sub1', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 
 		return _state_machine

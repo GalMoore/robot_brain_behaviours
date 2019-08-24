@@ -10,14 +10,12 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from robot_brain_flexbe_states.launch_video_stream_state import LaunchVideoStream
 from robot_brain_flexbe_states.launch_face_server import LaunchFaceServer
+from robot_brain_flexbe_states.launch_arduino_led import LaunchArduinoLed
 from robot_brain_flexbe_states.talk_state import TalkState
-from robot_brain_flexbe_states.launch_obj_detect_and_track import LaunchObjDetectAndTrack
-from flexbe_states.check_condition_state import CheckConditionState
-from robot_brain_flexbe_states.stop_object_detect_and_track import StopObjectDetectAndTrack
-from flexbe_states.subscriber_state import SubscriberState
 from robot_brain_flexbe_states.launch_face_det_track_state import FaceDetTrack
 from robot_brain_flexbe_states.facial_expression_state import FacialExpressionState
 from robot_brain_flexbe_states.stop_face_detect_and_track import StopFaceDetectAndTrack
+from flexbe_states.subscriber_state import SubscriberState
 from robot_brain_flexbe_states.listening_state import ListeningState
 from robot_brain_flexbe_states.word_check_state import WordCheckingState
 from flexbe_states.log_state import LogState
@@ -28,6 +26,9 @@ from robot_brain_flexbe_states.identify_state import IdentifyState
 from flexbe_states.wait_state import WaitState
 from robot_brain_flexbe_states.check_simple_string import WordCheckingStringState
 from robot_brain_flexbe_states.stop_identify import StopIdentifyState
+from robot_brain_flexbe_states.launch_obj_detect_and_track import LaunchObjDetectAndTrack
+from flexbe_states.check_condition_state import CheckConditionState
+from robot_brain_flexbe_states.stop_object_detect_and_track import StopObjectDetectAndTrack
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -70,10 +71,77 @@ class toilabinteractionSM(Behavior):
 		
 		# [/MANUAL_CREATE]
 
-		# x:30 y:408, x:370 y:201
-		_sm_what_do_next_0 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		# x:30 y:338, x:339 y:254
+		_sm_object_detection_till_face_nearby_0 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_what_do_next_0:
+		with _sm_object_detection_till_face_nearby_0:
+			# x:167 y:58
+			OperatableStateMachine.add('obj det trk',
+										LaunchObjDetectAndTrack(),
+										transitions={'continue': 'strtdobj', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:661 y:188
+			OperatableStateMachine.add('chk person',
+										CheckConditionState(predicate=lambda person_message: person_message.data == "yes"),
+										transitions={'true': 'found face ', 'false': 'sub person'},
+										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
+										remapping={'input_value': 'person_message'})
+
+			# x:308 y:364
+			OperatableStateMachine.add('stop obj trk',
+										StopObjectDetectAndTrack(),
+										transitions={'continue': 'finished', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:495 y:37
+			OperatableStateMachine.add('strtdobj',
+										TalkState(sentence_number=25),
+										transitions={'continue': 'sub person', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:697 y:303
+			OperatableStateMachine.add('found face ',
+										TalkState(sentence_number=24),
+										transitions={'continue': 'stop obj trk', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:775 y:45
+			OperatableStateMachine.add('sub person',
+										SubscriberState(topic='/is_person_nearby', blocking=True, clear=False),
+										transitions={'received': 'chk person', 'unavailable': 'chk person'},
+										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
+										remapping={'message': 'person_message'})
+
+			# x:112 y:64
+			OperatableStateMachine.add('video stream',
+										LaunchVideoStream(vid_input_num=1),
+										transitions={'continue': 'face motor server', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:337 y:45
+			OperatableStateMachine.add('face motor server',
+										LaunchFaceServer(),
+										transitions={'continue': 'arduino_startup', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:658 y:202
+			OperatableStateMachine.add('23',
+										TalkState(sentence_number=23),
+										transitions={'continue': 'finished', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:635 y:65
+			OperatableStateMachine.add('arduino_startup',
+										LaunchArduinoLed(),
+										transitions={'continue': '23', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+
+		# x:30 y:408, x:370 y:201
+		_sm_what_do_next_1 = OperatableStateMachine(outcomes=['finished', 'failed'])
+
+		with _sm_what_do_next_1:
 			# x:30 y:40
 			OperatableStateMachine.add('t29',
 										TalkState(sentence_number=29),
@@ -100,9 +168,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:256 y:317, x:458 y:279
-		_sm_interaction_1 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_interaction_2 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_interaction_1:
+		with _sm_interaction_2:
 			# x:166 y:76
 			OperatableStateMachine.add('start face det trk',
 										FaceDetTrack(),
@@ -185,9 +253,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:30 y:365, x:172 y:294
-		_sm_game_2 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_game_3 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_game_2:
+		with _sm_game_3:
 			# x:40 y:41
 			OperatableStateMachine.add('face trk',
 										FaceDetTrack(),
@@ -247,9 +315,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:30 y:365, x:130 y:365
-		_sm_do_nothing_3 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_do_nothing_4 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_do_nothing_3:
+		with _sm_do_nothing_4:
 			# x:118 y:83
 			OperatableStateMachine.add('stopdettrkface',
 										StopFaceDetectAndTrack(),
@@ -276,9 +344,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:1214 y:584, x:130 y:368, x:849 y:566, x:938 y:579, x:602 y:556
-		_sm_user_input_speech_4 = OperatableStateMachine(outcomes=['finished', 'failed', 'identification', 'game', 'nothing'])
+		_sm_user_input_speech_5 = OperatableStateMachine(outcomes=['finished', 'failed', 'identification', 'game', 'nothing'])
 
-		with _sm_user_input_speech_4:
+		with _sm_user_input_speech_5:
 			# x:71 y:57
 			OperatableStateMachine.add('stopfacedettrk',
 										StopFaceDetectAndTrack(),
@@ -353,9 +421,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:195 y:308, x:402 y:431
-		_sm_face_det_and_start_interaction_ask_user_what_next_5 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_face_det_and_start_interaction_ask_user_what_next_6 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_face_det_and_start_interaction_ask_user_what_next_5:
+		with _sm_face_det_and_start_interaction_ask_user_what_next_6:
 			# x:64 y:61
 			OperatableStateMachine.add('face det trk',
 										FaceDetTrack(),
@@ -393,66 +461,29 @@ class toilabinteractionSM(Behavior):
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 
-		# x:30 y:338, x:339 y:254
-		_sm_object_detection_till_face_nearby_6 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		# x:30 y:365, x:237 y:222
+		_sm_face_server_video_and_arduino_init_7 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_object_detection_till_face_nearby_6:
-			# x:167 y:58
-			OperatableStateMachine.add('obj det trk',
-										LaunchObjDetectAndTrack(),
-										transitions={'continue': 'strtdobj', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:661 y:188
-			OperatableStateMachine.add('chk person',
-										CheckConditionState(predicate=lambda person_message: person_message.data == "yes"),
-										transitions={'true': 'found face ', 'false': 'sub person'},
-										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
-										remapping={'input_value': 'person_message'})
-
-			# x:308 y:364
-			OperatableStateMachine.add('stop obj trk',
-										StopObjectDetectAndTrack(),
-										transitions={'continue': 'finished', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:495 y:37
-			OperatableStateMachine.add('strtdobj',
-										TalkState(sentence_number=25),
-										transitions={'continue': 'sub person', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:697 y:303
-			OperatableStateMachine.add('found face ',
-										TalkState(sentence_number=24),
-										transitions={'continue': 'stop obj trk', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:775 y:45
-			OperatableStateMachine.add('sub person',
-										SubscriberState(topic='/is_person_nearby', blocking=True, clear=False),
-										transitions={'received': 'chk person', 'unavailable': 'chk person'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'person_message'})
-
-
-		# x:370 y:484, x:130 y:365
-		_sm_startup_vid_motors_srvr_7 = OperatableStateMachine(outcomes=['finished', 'failed'])
-
-		with _sm_startup_vid_motors_srvr_7:
-			# x:112 y:64
-			OperatableStateMachine.add('video stream',
+		with _sm_face_server_video_and_arduino_init_7:
+			# x:54 y:82
+			OperatableStateMachine.add('launch video',
 										LaunchVideoStream(vid_input_num=1),
-										transitions={'continue': 'face motor server', 'failed': 'failed'},
+										transitions={'continue': 'init face server', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:337 y:45
-			OperatableStateMachine.add('face motor server',
+			# x:308 y:86
+			OperatableStateMachine.add('init face server',
 										LaunchFaceServer(),
+										transitions={'continue': 'init arduino', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:493 y:204
+			OperatableStateMachine.add('init arduino',
+										LaunchArduinoLed(),
 										transitions={'continue': '23', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:658 y:202
+			# x:401 y:338
 			OperatableStateMachine.add('23',
 										TalkState(sentence_number=23),
 										transitions={'continue': 'finished', 'failed': 'failed'},
@@ -461,52 +492,52 @@ class toilabinteractionSM(Behavior):
 
 
 		with _state_machine:
-			# x:127 y:84
-			OperatableStateMachine.add('startup vid motors srvr',
-										_sm_startup_vid_motors_srvr_7,
+			# x:30 y:40
+			OperatableStateMachine.add('face server video and arduino init',
+										_sm_face_server_video_and_arduino_init_7,
 										transitions={'finished': 'what do next', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
-
-			# x:956 y:166
-			OperatableStateMachine.add('object detection till face nearby',
-										_sm_object_detection_till_face_nearby_6,
-										transitions={'finished': 'face det and start interaction ask user what next', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:701 y:41
 			OperatableStateMachine.add('face det and start interaction ask user what next',
-										_sm_face_det_and_start_interaction_ask_user_what_next_5,
+										_sm_face_det_and_start_interaction_ask_user_what_next_6,
 										transitions={'finished': 'what do next', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:359 y:340
 			OperatableStateMachine.add('user input speech',
-										_sm_user_input_speech_4,
+										_sm_user_input_speech_5,
 										transitions={'finished': 'finished', 'failed': 'failed', 'identification': 'interaction', 'game': 'game', 'nothing': 'do_nothing'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit, 'identification': Autonomy.Inherit, 'game': Autonomy.Inherit, 'nothing': Autonomy.Inherit})
 
 			# x:711 y:223
 			OperatableStateMachine.add('do_nothing',
-										_sm_do_nothing_3,
+										_sm_do_nothing_4,
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:710 y:307
 			OperatableStateMachine.add('game',
-										_sm_game_2,
+										_sm_game_3,
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:698 y:393
 			OperatableStateMachine.add('interaction',
-										_sm_interaction_1,
+										_sm_interaction_2,
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:358 y:169
 			OperatableStateMachine.add('what do next',
-										_sm_what_do_next_0,
+										_sm_what_do_next_1,
 										transitions={'finished': 'user input speech', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:956 y:166
+			OperatableStateMachine.add('object detection till face nearby',
+										_sm_object_detection_till_face_nearby_0,
+										transitions={'finished': 'face det and start interaction ask user what next', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
