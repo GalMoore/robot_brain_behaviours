@@ -22,12 +22,15 @@ class ListeningState(EventState):
 
 	def execute(self, userdata):
 		#os.system("rosrun robot_ears pu_one_msg_stt.py &" )
-		os.system("rosrun robot_ears speech_to_text.py {}".format(userdata.input_value.data))
+		Logger.loginfo("listening state got input: ")
+		Logger.loginfo(userdata.input_value)
+		# Logger.loginfo(userdata.input_value)
+		os.system("rosrun robot_ears speech_to_text.py {}".format(userdata.input_value))
 		return 'continue' # One of the outcomes declared above.
 
 	def on_enter(self, userdata):
 		# Logger.loginfo("(not actually connected to ambience threshold input - to do)")
-		Logger.loginfo("starting to record user input voice wih calib average vol found of : " + str(userdata.input_value.data))
+		# Logger.loginfo("starting to record user input voice wih calib average vol found of : " + str(userdata.input_value.data))
 		# Logger.logwarn("rosrun robot_ears speech_to_text.py {} &".format(userdata.input_value.data))
 
 		pass

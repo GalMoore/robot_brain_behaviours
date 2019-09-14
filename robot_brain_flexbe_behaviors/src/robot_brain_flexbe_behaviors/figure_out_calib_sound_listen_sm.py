@@ -8,13 +8,11 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from robot_brain_flexbe_states.sound_calibration_state import SoundCalibState
-from flexbe_states.subscriber_state import SubscriberState
-from robot_brain_flexbe_states.listening_state import ListeningState
-from robot_brain_flexbe_states.word_check_state import WordCheckingState
-from robot_brain_flexbe_states.log_input_data import LogTopicMessage
-from flexbe_states.log_state import LogState
 from robot_brain_flexbe_states.launch_arduino_led import LaunchArduinoLed
+from robot_brain_flexbe_states.listening_state import ListeningState
+from robot_brain_flexbe_states.sound_calibration_state import SoundCalibState
+from robot_brain_flexbe_states.word_check_state import WordCheckingState
+from robot_brain_flexbe_states.read_txt_and_msg_out import ReadTxtState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -65,79 +63,66 @@ class figure_out_calib_sound_listenSM(Behavior):
 										transitions={'continue': 'calib', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:331 y:18
-			OperatableStateMachine.add('sub1',
-										SubscriberState(topic='/avg_ambience_vol', blocking=True, clear=False),
-										transitions={'received': 'log', 'unavailable': 'unavailable'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'vol'})
-
-			# x:722 y:23
+			# x:550 y:45
 			OperatableStateMachine.add('listen',
 										ListeningState(),
-										transitions={'continue': 'text', 'failed': 'failed'},
+										transitions={'continue': 'read2txtstring', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'input_value': 'vol'})
+										remapping={'input_value': 'my_amb'})
 
-			# x:885 y:357
+			# x:591 y:446
 			OperatableStateMachine.add('calib2',
 										SoundCalibState(length_of_calibration=20),
-										transitions={'continue': 'sub2', 'failed': 'failed'},
+										transitions={'continue': 'read2', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:1091 y:395
-			OperatableStateMachine.add('sub2',
-										SubscriberState(topic='/avg_ambience_vol', blocking=True, clear=False),
-										transitions={'received': 'listen2', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'vol'})
-
-			# x:1091 y:237
+			# x:814 y:411
 			OperatableStateMachine.add('listen2',
 										ListeningState(),
-										transitions={'continue': 'again sub?', 'failed': 'failed'},
+										transitions={'continue': 'read5', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'input_value': 'vol'})
 
-			# x:962 y:41
-			OperatableStateMachine.add('text',
-										SubscriberState(topic='/stt_topic', blocking=True, clear=False),
-										transitions={'received': 'check text', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
-
-			# x:701 y:245
+			# x:585 y:257
 			OperatableStateMachine.add('check text',
 										WordCheckingState(key_word="again"),
 										transitions={'found': 'calib2', 'not_found': 'failed'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'input_value': 'message'})
 
-			# x:515 y:26
-			OperatableStateMachine.add('log',
-										LogTopicMessage(),
-										transitions={'continue': 'listen', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'input_value': 'vol'})
-
-			# x:234 y:171
-			OperatableStateMachine.add('unavailable',
-										LogState(text="Sub1 NAVAILABLE", severity=Logger.REPORT_HINT),
-										transitions={'done': 'sub1'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:958 y:136
-			OperatableStateMachine.add('again sub?',
-										SubscriberState(topic='/stt_topic', blocking=True, clear=False),
-										transitions={'received': 'check text', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
-
-			# x:154 y:89
+			# x:150 y:122
 			OperatableStateMachine.add('calib',
 										SoundCalibState(length_of_calibration=20),
-										transitions={'continue': 'sub1', 'failed': 'failed'},
+										transitions={'continue': 'read', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:343 y:141
+			OperatableStateMachine.add('read',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/volume_calib.txt"),
+										transitions={'unavailable': 'failed', 'got_message': 'listen'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'my_amb'})
+
+			# x:778 y:50
+			OperatableStateMachine.add('read2txtstring',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/query.txt"),
+										transitions={'unavailable': 'failed', 'got_message': 'check text'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'message'})
+
+			# x:804 y:513
+			OperatableStateMachine.add('read2',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/volume_calib.txt"),
+										transitions={'unavailable': 'failed', 'got_message': 'listen2'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'vol'})
+
+			# x:822 y:276
+			OperatableStateMachine.add('read5',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/query.txt"),
+										transitions={'unavailable': 'failed', 'got_message': 'check text'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'message'})
 
 
 		return _state_machine

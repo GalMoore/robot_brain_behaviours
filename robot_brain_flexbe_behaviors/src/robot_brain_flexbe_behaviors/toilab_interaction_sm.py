@@ -15,13 +15,14 @@ from robot_brain_flexbe_states.talk_state import TalkState
 from robot_brain_flexbe_states.launch_face_det_track_state import FaceDetTrack
 from robot_brain_flexbe_states.facial_expression_state import FacialExpressionState
 from robot_brain_flexbe_states.stop_face_detect_and_track import StopFaceDetectAndTrack
-from flexbe_states.subscriber_state import SubscriberState
 from robot_brain_flexbe_states.listening_state import ListeningState
 from robot_brain_flexbe_states.word_check_state import WordCheckingState
-from flexbe_states.log_state import LogState
 from robot_brain_flexbe_states.sound_calibration_state import SoundCalibState
+from robot_brain_flexbe_states.read_txt_and_msg_out import ReadTxtState
+from flexbe_states.subscriber_state import SubscriberState
 from robot_brain_flexbe_states.gender_check_state import AgeGenderCheckingState
 from robot_brain_flexbe_states.check_what_to_stay_State import AgeGenderCheckSpeechState
+from flexbe_states.log_state import LogState
 from robot_brain_flexbe_states.identify_state import IdentifyState
 from flexbe_states.wait_state import WaitState
 from robot_brain_flexbe_states.check_simple_string import WordCheckingStringState
@@ -113,7 +114,7 @@ class toilabinteractionSM(Behavior):
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'person_message'})
 
-			# x:112 y:64
+			# x:112 y:120
 			OperatableStateMachine.add('video stream',
 										LaunchVideoStream(vid_input_num=1),
 										transitions={'continue': 'face motor server', 'failed': 'failed'},
@@ -125,13 +126,13 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': 'arduino_startup', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:658 y:202
+			# x:658 y:250
 			OperatableStateMachine.add('23',
 										TalkState(sentence_number=23),
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:635 y:65
+			# x:623 y:99
 			OperatableStateMachine.add('arduino_startup',
 										LaunchArduinoLed(),
 										transitions={'continue': '23', 'failed': 'failed'},
@@ -307,7 +308,7 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:870 y:59
+			# x:874 y:21
 			OperatableStateMachine.add('log',
 										LogState(text="log", severity=Logger.REPORT_HINT),
 										transitions={'done': 'sub vino age gendre'},
@@ -353,26 +354,12 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': 'calib', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:453 y:35
-			OperatableStateMachine.add('sub for vol',
-										SubscriberState(topic='/avg_ambience_vol', blocking=True, clear=False),
-										transitions={'received': 'listen1', 'unavailable': 'log'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'vol'})
-
-			# x:638 y:51
+			# x:607 y:31
 			OperatableStateMachine.add('listen1',
 										ListeningState(),
-										transitions={'continue': 'sub_stt', 'failed': 'failed'},
+										transitions={'continue': 'read2', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'input_value': 'vol'})
-
-			# x:897 y:126
-			OperatableStateMachine.add('sub_stt',
-										SubscriberState(topic='/stt_topic', blocking=True, clear=False),
-										transitions={'received': 'word chk "do nothing"', 'unavailable': 'logg'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
+										remapping={'input_value': 'calib1'})
 
 			# x:666 y:184
 			OperatableStateMachine.add('word chk "do nothing"',
@@ -395,22 +382,10 @@ class toilabinteractionSM(Behavior):
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'input_value': 'message'})
 
-			# x:319 y:140
-			OperatableStateMachine.add('log',
-										LogState(text="log", severity=Logger.REPORT_HINT),
-										transitions={'done': 'sub for vol'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:1085 y:120
-			OperatableStateMachine.add('logg',
-										LogState(text="logging", severity=Logger.REPORT_HINT),
-										transitions={'done': 'sub_stt'},
-										autonomy={'done': Autonomy.Off})
-
 			# x:138 y:152
 			OperatableStateMachine.add('calib',
 										SoundCalibState(length_of_calibration=20),
-										transitions={'continue': 'sub for vol', 'failed': 'failed'},
+										transitions={'continue': 'read1', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:1123 y:431
@@ -418,6 +393,20 @@ class toilabinteractionSM(Behavior):
 										TalkState(sentence_number=39),
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:417 y:112
+			OperatableStateMachine.add('read1',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/volume_calib.txt"),
+										transitions={'unavailable': 'failed', 'got_message': 'listen1'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'calib1'})
+
+			# x:818 y:68
+			OperatableStateMachine.add('read2',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/query.txt"),
+										transitions={'unavailable': 'failed', 'got_message': 'word chk "do nothing"'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'message'})
 
 
 		# x:195 y:308, x:402 y:431
@@ -467,7 +456,7 @@ class toilabinteractionSM(Behavior):
 		with _sm_face_server_video_and_arduino_init_7:
 			# x:54 y:82
 			OperatableStateMachine.add('launch video',
-										LaunchVideoStream(vid_input_num=1),
+										LaunchVideoStream(vid_input_num=0),
 										transitions={'continue': 'init face server', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
@@ -504,10 +493,10 @@ class toilabinteractionSM(Behavior):
 										transitions={'finished': 'what do next', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:359 y:340
+			# x:352 y:396
 			OperatableStateMachine.add('user input speech',
 										_sm_user_input_speech_5,
-										transitions={'finished': 'finished', 'failed': 'failed', 'identification': 'interaction', 'game': 'game', 'nothing': 'do_nothing'},
+										transitions={'finished': 'what do next', 'failed': 'failed', 'identification': 'interaction', 'game': 'game', 'nothing': 'do_nothing'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit, 'identification': Autonomy.Inherit, 'game': Autonomy.Inherit, 'nothing': Autonomy.Inherit})
 
 			# x:711 y:223
@@ -528,7 +517,7 @@ class toilabinteractionSM(Behavior):
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:358 y:169
+			# x:348 y:197
 			OperatableStateMachine.add('what do next',
 										_sm_what_do_next_1,
 										transitions={'finished': 'user input speech', 'failed': 'failed'},

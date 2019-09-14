@@ -30,13 +30,14 @@ class LaunchArduinoLed(EventState):
 		time.sleep(0.2)
 		# os.system("rostopic pub /avg_ambience_vol std_msgs/Int16 \"data: 0\" &") # does this help get the topic started?
 
-		os.system("rostopic pub /is_robot_listening std_msgs/String \"data: 'not listening'\" &")
+
 		return 'continue' # One of the outcomes declared above.
 
 	def on_enter(self, userdata):
 		# os.system("roslaunch video_stream_opencv camera.launch video_stream_provider:={} &".format(self._vid_input_num))
 
 		os.system("rosrun robot_arduino PythonArduino.py &")
+		os.system("rostopic pub /is_robot_listening std_msgs/String \"data: 'not listening'\" &")
 		Logger.loginfo('starting arduino led')
 
 	def on_exit(self, userdata):
