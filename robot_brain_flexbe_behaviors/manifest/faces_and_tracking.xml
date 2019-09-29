@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="faces_and_tracking">
+
+	<executable package_path="robot_brain_flexbe_behaviors.faces_and_tracking_sm" class="faces_and_trackingSM" />
+	<tagstring>faces_and_Tracking</tagstring>
+	<author>gal</author>
+	<date>Fri Sep 20 2019</date>
+	<description>
+		faces_and_Tracking
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

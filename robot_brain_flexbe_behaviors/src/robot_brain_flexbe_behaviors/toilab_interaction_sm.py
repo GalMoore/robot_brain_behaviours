@@ -14,11 +14,11 @@ from robot_brain_flexbe_states.launch_arduino_led import LaunchArduinoLed
 from robot_brain_flexbe_states.talk_state import TalkState
 from robot_brain_flexbe_states.launch_face_det_track_state import FaceDetTrack
 from robot_brain_flexbe_states.facial_expression_state import FacialExpressionState
+from robot_brain_flexbe_states.sound_calibration_state import SoundCalibState
+from robot_brain_flexbe_states.word_check_state import WordCheckingState
+from robot_brain_flexbe_states.read_txt_and_msg_out import ReadTxtState
 from robot_brain_flexbe_states.stop_face_detect_and_track import StopFaceDetectAndTrack
 from robot_brain_flexbe_states.listening_state import ListeningState
-from robot_brain_flexbe_states.word_check_state import WordCheckingState
-from robot_brain_flexbe_states.sound_calibration_state import SoundCalibState
-from robot_brain_flexbe_states.read_txt_and_msg_out import ReadTxtState
 from flexbe_states.subscriber_state import SubscriberState
 from robot_brain_flexbe_states.gender_check_state import AgeGenderCheckingState
 from robot_brain_flexbe_states.check_what_to_stay_State import AgeGenderCheckSpeechState
@@ -30,6 +30,7 @@ from robot_brain_flexbe_states.stop_identify import StopIdentifyState
 from robot_brain_flexbe_states.launch_obj_detect_and_track import LaunchObjDetectAndTrack
 from flexbe_states.check_condition_state import CheckConditionState
 from robot_brain_flexbe_states.stop_object_detect_and_track import StopObjectDetectAndTrack
+from robot_brain_flexbe_states.facial_gestures_state import FacialGesturesState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -61,6 +62,9 @@ class toilabinteractionSM(Behavior):
 
 		# Behavior comments:
 
+		# O 637 168 /user input speech
+		# this must be done at some point cause we arrive here often after obj tracking turned face trk
+
 
 
 	def create(self):
@@ -72,10 +76,108 @@ class toilabinteractionSM(Behavior):
 		
 		# [/MANUAL_CREATE]
 
-		# x:30 y:338, x:339 y:254
-		_sm_object_detection_till_face_nearby_0 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		# x:30 y:372, x:130 y:372
+		_sm_joke_0 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_object_detection_till_face_nearby_0:
+		with _sm_joke_0:
+			# x:29 y:86
+			OperatableStateMachine.add('great',
+										TalkState(sentence_number=42),
+										transitions={'continue': '44', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:241 y:67
+			OperatableStateMachine.add('44',
+										TalkState(sentence_number=44),
+										transitions={'continue': 'ccalib', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:446 y:20
+			OperatableStateMachine.add('ccalib',
+										SoundCalibState(length_of_calibration=5),
+										transitions={'continue': 'readcalib', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:696 y:130
+			OperatableStateMachine.add('listenn',
+										ListeningState(),
+										transitions={'continue': 'readquery', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'input_value': 'calib_vol'})
+
+			# x:695 y:30
+			OperatableStateMachine.add('readcalib',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/volume_calib.txt"),
+										transitions={'unavailable': 'failed', 'got_message': 'listenn'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'calib_vol'})
+
+			# x:708 y:235
+			OperatableStateMachine.add('readquery',
+										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/query.txt"),
+										transitions={'unavailable': 'failed', 'got_message': '43'},
+										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
+										remapping={'message': 'message'})
+
+			# x:712 y:329
+			OperatableStateMachine.add('43',
+										TalkState(sentence_number=43),
+										transitions={'continue': 'lllisten', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:713 y:433
+			OperatableStateMachine.add('lllisten',
+										ListeningState(),
+										transitions={'continue': 'ttlk45', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'input_value': 'calib_vol'})
+
+			# x:487 y:468
+			OperatableStateMachine.add('ttlk45',
+										TalkState(sentence_number=45),
+										transitions={'continue': '46', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:275 y:461
+			OperatableStateMachine.add('46',
+										TalkState(sentence_number=46),
+										transitions={'continue': 'finished', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+
+		# x:372 y:465, x:254 y:391
+		_sm_waking_up_1 = OperatableStateMachine(outcomes=['finished', 'failed'])
+
+		with _sm_waking_up_1:
+			# x:181 y:75
+			OperatableStateMachine.add('facial gestures eyes mouth only',
+										FacialGesturesState(),
+										transitions={'continue': '40', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:612 y:466
+			OperatableStateMachine.add('3',
+										WaitState(wait_time=2),
+										transitions={'done': 'finished'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:533 y:89
+			OperatableStateMachine.add('40',
+										TalkState(sentence_number=40),
+										transitions={'continue': '41', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:630 y:214
+			OperatableStateMachine.add('41',
+										TalkState(sentence_number=41),
+										transitions={'continue': '3', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+
+		# x:30 y:338, x:339 y:254
+		_sm_object_detection_till_face_nearby_2 = OperatableStateMachine(outcomes=['finished', 'failed'])
+
+		with _sm_object_detection_till_face_nearby_2:
 			# x:167 y:58
 			OperatableStateMachine.add('obj det trk',
 										LaunchObjDetectAndTrack(),
@@ -140,9 +242,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:30 y:408, x:370 y:201
-		_sm_what_do_next_1 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_what_do_next_3 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_what_do_next_1:
+		with _sm_what_do_next_3:
 			# x:30 y:40
 			OperatableStateMachine.add('t29',
 										TalkState(sentence_number=29),
@@ -169,9 +271,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:256 y:317, x:458 y:279
-		_sm_interaction_2 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_identify_4 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_interaction_2:
+		with _sm_identify_4:
 			# x:166 y:76
 			OperatableStateMachine.add('start face det trk',
 										FaceDetTrack(),
@@ -254,9 +356,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:30 y:365, x:172 y:294
-		_sm_game_3 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_game_5 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_game_3:
+		with _sm_game_5:
 			# x:40 y:41
 			OperatableStateMachine.add('face trk',
 										FaceDetTrack(),
@@ -315,10 +417,10 @@ class toilabinteractionSM(Behavior):
 										autonomy={'done': Autonomy.Off})
 
 
-		# x:30 y:365, x:130 y:365
-		_sm_do_nothing_4 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		# x:202 y:510, x:130 y:365
+		_sm_tracking_6 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_do_nothing_4:
+		with _sm_tracking_6:
 			# x:118 y:83
 			OperatableStateMachine.add('stopdettrkface',
 										StopFaceDetectAndTrack(),
@@ -328,70 +430,51 @@ class toilabinteractionSM(Behavior):
 			# x:570 y:190
 			OperatableStateMachine.add('tlk33',
 										TalkState(sentence_number=33),
-										transitions={'continue': '34', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:408 y:283
-			OperatableStateMachine.add('34',
-										TalkState(sentence_number=34),
 										transitions={'continue': '35', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:418 y:455
+			# x:509 y:405
 			OperatableStateMachine.add('35',
 										TalkState(sentence_number=35),
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 
-		# x:1214 y:584, x:130 y:368, x:849 y:566, x:938 y:579, x:602 y:556
-		_sm_user_input_speech_5 = OperatableStateMachine(outcomes=['finished', 'failed', 'identification', 'game', 'nothing'])
+		# x:1214 y:584, x:130 y:368, x:849 y:566, x:938 y:579, x:793 y:382, x:1024 y:542
+		_sm_user_input_speech_7 = OperatableStateMachine(outcomes=['finished', 'failed', 'identification', 'game', 'tracking', 'joke'])
 
-		with _sm_user_input_speech_5:
-			# x:71 y:57
-			OperatableStateMachine.add('stopfacedettrk',
-										StopFaceDetectAndTrack(),
-										transitions={'continue': 'calib', 'failed': 'failed'},
+		with _sm_user_input_speech_7:
+			# x:105 y:65
+			OperatableStateMachine.add('calib',
+										SoundCalibState(length_of_calibration=20),
+										transitions={'continue': 'read1', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:607 y:31
-			OperatableStateMachine.add('listen1',
-										ListeningState(),
-										transitions={'continue': 'read2', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'input_value': 'calib1'})
-
-			# x:666 y:184
-			OperatableStateMachine.add('word chk "do nothing"',
-										WordCheckingState(key_word="nothing"),
-										transitions={'found': 'nothing', 'not_found': 'wrd chk "identification"'},
+			# x:477 y:315
+			OperatableStateMachine.add('word chk "tracking"',
+										WordCheckingState(key_word="tracking"),
+										transitions={'found': 'tracking', 'not_found': 'wrd chk "identification"'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'input_value': 'message'})
 
-			# x:802 y:282
+			# x:701 y:294
 			OperatableStateMachine.add('wrd chk "identification"',
 										WordCheckingState(key_word="identification"),
 										transitions={'found': 'identification', 'not_found': 'wrd chk "game"'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'input_value': 'message'})
 
-			# x:1015 y:316
+			# x:873 y:293
 			OperatableStateMachine.add('wrd chk "game"',
 										WordCheckingState(key_word="game"),
-										transitions={'found': 'game', 'not_found': '39'},
+										transitions={'found': 'game', 'not_found': 'wrd chek "joke"'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'input_value': 'message'})
 
-			# x:138 y:152
-			OperatableStateMachine.add('calib',
-										SoundCalibState(length_of_calibration=20),
-										transitions={'continue': 'read1', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:1123 y:431
+			# x:1209 y:475
 			OperatableStateMachine.add('39',
 										TalkState(sentence_number=39),
-										transitions={'continue': 'finished', 'failed': 'failed'},
+										transitions={'continue': 'tracking', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:417 y:112
@@ -404,15 +487,35 @@ class toilabinteractionSM(Behavior):
 			# x:818 y:68
 			OperatableStateMachine.add('read2',
 										ReadTxtState(txt_path="/home/intel/catkin_ws/src/robot_ears/text_files/query.txt"),
-										transitions={'unavailable': 'failed', 'got_message': 'word chk "do nothing"'},
+										transitions={'unavailable': 'failed', 'got_message': 'stopfacedettrk22'},
 										autonomy={'unavailable': Autonomy.Off, 'got_message': Autonomy.Off},
 										remapping={'message': 'message'})
 
+			# x:637 y:209
+			OperatableStateMachine.add('stopfacedettrk22',
+										StopFaceDetectAndTrack(),
+										transitions={'continue': 'word chk "tracking"', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:607 y:31
+			OperatableStateMachine.add('listen1',
+										ListeningState(),
+										transitions={'continue': 'read2', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'input_value': 'calib1'})
+
+			# x:1132 y:279
+			OperatableStateMachine.add('wrd chek "joke"',
+										WordCheckingState(key_word="joke"),
+										transitions={'found': 'joke', 'not_found': '39'},
+										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
+										remapping={'input_value': 'message'})
+
 
 		# x:195 y:308, x:402 y:431
-		_sm_face_det_and_start_interaction_ask_user_what_next_6 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_face_det_and_start_interaction_ask_user_what_next_8 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_face_det_and_start_interaction_ask_user_what_next_6:
+		with _sm_face_det_and_start_interaction_ask_user_what_next_8:
 			# x:64 y:61
 			OperatableStateMachine.add('face det trk',
 										FaceDetTrack(),
@@ -451,9 +554,9 @@ class toilabinteractionSM(Behavior):
 
 
 		# x:30 y:365, x:237 y:222
-		_sm_face_server_video_and_arduino_init_7 = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_sm_face_server_video_and_arduino_init_9 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
-		with _sm_face_server_video_and_arduino_init_7:
+		with _sm_face_server_video_and_arduino_init_9:
 			# x:54 y:82
 			OperatableStateMachine.add('launch video',
 										LaunchVideoStream(vid_input_num=0),
@@ -483,50 +586,62 @@ class toilabinteractionSM(Behavior):
 		with _state_machine:
 			# x:30 y:40
 			OperatableStateMachine.add('face server video and arduino init',
-										_sm_face_server_video_and_arduino_init_7,
-										transitions={'finished': 'what do next', 'failed': 'failed'},
+										_sm_face_server_video_and_arduino_init_9,
+										transitions={'finished': 'waking up', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:701 y:41
+			# x:796 y:38
 			OperatableStateMachine.add('face det and start interaction ask user what next',
-										_sm_face_det_and_start_interaction_ask_user_what_next_6,
+										_sm_face_det_and_start_interaction_ask_user_what_next_8,
 										transitions={'finished': 'what do next', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:352 y:396
+			# x:458 y:564
 			OperatableStateMachine.add('user input speech',
-										_sm_user_input_speech_5,
-										transitions={'finished': 'what do next', 'failed': 'failed', 'identification': 'interaction', 'game': 'game', 'nothing': 'do_nothing'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit, 'identification': Autonomy.Inherit, 'game': Autonomy.Inherit, 'nothing': Autonomy.Inherit})
+										_sm_user_input_speech_7,
+										transitions={'finished': 'finished', 'failed': 'failed', 'identification': 'identify', 'game': 'game', 'tracking': 'tracking', 'joke': 'joke'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit, 'identification': Autonomy.Inherit, 'game': Autonomy.Inherit, 'tracking': Autonomy.Inherit, 'joke': Autonomy.Inherit})
 
-			# x:711 y:223
-			OperatableStateMachine.add('do_nothing',
-										_sm_do_nothing_4,
+			# x:721 y:192
+			OperatableStateMachine.add('tracking',
+										_sm_tracking_6,
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:710 y:307
+			# x:727 y:275
 			OperatableStateMachine.add('game',
-										_sm_game_3,
+										_sm_game_5,
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:698 y:393
-			OperatableStateMachine.add('interaction',
-										_sm_interaction_2,
+			# x:738 y:361
+			OperatableStateMachine.add('identify',
+										_sm_identify_4,
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:348 y:197
+			# x:329 y:373
 			OperatableStateMachine.add('what do next',
-										_sm_what_do_next_1,
+										_sm_what_do_next_3,
 										transitions={'finished': 'user input speech', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:956 y:166
+			# x:1001 y:181
 			OperatableStateMachine.add('object detection till face nearby',
-										_sm_object_detection_till_face_nearby_0,
+										_sm_object_detection_till_face_nearby_2,
 										transitions={'finished': 'face det and start interaction ask user what next', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:286 y:202
+			OperatableStateMachine.add('waking up',
+										_sm_waking_up_1,
+										transitions={'finished': 'what do next', 'failed': 'finished'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:739 y:488
+			OperatableStateMachine.add('joke',
+										_sm_joke_0,
+										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
