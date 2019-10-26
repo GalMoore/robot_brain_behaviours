@@ -14,11 +14,14 @@ from robot_brain_flexbe_states.launch_arduino_led import LaunchArduinoLed
 from robot_brain_flexbe_states.talk_state import TalkState
 from robot_brain_flexbe_states.launch_face_det_track_state import FaceDetTrack
 from robot_brain_flexbe_states.facial_expression_state import FacialExpressionState
+from robot_brain_flexbe_states.kill_facial_gestures import KillFacialGesturesState
+from robot_brain_flexbe_states.facial_gestures_for_face_Det import FacialGesturesFaceDetState
 from robot_brain_flexbe_states.sound_calibration_state import SoundCalibState
 from robot_brain_flexbe_states.word_check_state import WordCheckingState
 from robot_brain_flexbe_states.read_txt_and_msg_out import ReadTxtState
 from robot_brain_flexbe_states.stop_face_detect_and_track import StopFaceDetectAndTrack
 from robot_brain_flexbe_states.listening_state import ListeningState
+from robot_brain_flexbe_states.decide_talk_state import DecideTalkState
 from flexbe_states.subscriber_state import SubscriberState
 from robot_brain_flexbe_states.gender_check_state import AgeGenderCheckingState
 from robot_brain_flexbe_states.check_what_to_stay_State import AgeGenderCheckSpeechState
@@ -27,10 +30,10 @@ from robot_brain_flexbe_states.identify_state import IdentifyState
 from flexbe_states.wait_state import WaitState
 from robot_brain_flexbe_states.check_simple_string import WordCheckingStringState
 from robot_brain_flexbe_states.stop_identify import StopIdentifyState
-from robot_brain_flexbe_states.launch_obj_detect_and_track import LaunchObjDetectAndTrack
 from flexbe_states.check_condition_state import CheckConditionState
 from robot_brain_flexbe_states.stop_object_detect_and_track import StopObjectDetectAndTrack
 from robot_brain_flexbe_states.facial_gestures_state import FacialGesturesState
+from robot_brain_flexbe_states.launch_obj_detect_and_track import LaunchObjDetectAndTrack
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -80,21 +83,15 @@ class toilabinteractionSM(Behavior):
 		_sm_joke_0 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		with _sm_joke_0:
-			# x:29 y:86
-			OperatableStateMachine.add('great',
-										TalkState(sentence_number=42),
-										transitions={'continue': '44', 'failed': 'failed'},
+			# x:83 y:58
+			OperatableStateMachine.add('startfacedettrk2',
+										FaceDetTrack(),
+										transitions={'continue': 'great', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:241 y:67
+			# x:465 y:94
 			OperatableStateMachine.add('44',
 										TalkState(sentence_number=44),
-										transitions={'continue': 'ccalib', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:446 y:20
-			OperatableStateMachine.add('ccalib',
-										SoundCalibState(length_of_calibration=5),
 										transitions={'continue': 'readcalib', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
@@ -141,18 +138,30 @@ class toilabinteractionSM(Behavior):
 			# x:275 y:461
 			OperatableStateMachine.add('46',
 										TalkState(sentence_number=46),
+										transitions={'continue': 'stopffcedettrk', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:83 y:558
+			OperatableStateMachine.add('stopffcedettrk',
+										StopFaceDetectAndTrack(),
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
+			# x:270 y:113
+			OperatableStateMachine.add('great',
+										TalkState(sentence_number=42),
+										transitions={'continue': '44', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-		# x:372 y:465, x:254 y:391
+
+		# x:372 y:465, x:183 y:214
 		_sm_waking_up_1 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		with _sm_waking_up_1:
 			# x:181 y:75
 			OperatableStateMachine.add('facial gestures eyes mouth only',
 										FacialGesturesState(),
-										transitions={'continue': '40', 'failed': 'failed'},
+										transitions={'continue': 'decide_talk', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:612 y:466
@@ -161,33 +170,63 @@ class toilabinteractionSM(Behavior):
 										transitions={'done': 'finished'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:533 y:89
+			# x:719 y:238
 			OperatableStateMachine.add('40',
 										TalkState(sentence_number=40),
 										transitions={'continue': '41', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:630 y:214
+			# x:712 y:335
 			OperatableStateMachine.add('41',
 										TalkState(sentence_number=41),
 										transitions={'continue': '3', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
+			# x:527 y:239
+			OperatableStateMachine.add('51',
+										TalkState(sentence_number=51),
+										transitions={'continue': '52', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-		# x:30 y:338, x:339 y:254
+			# x:528 y:333
+			OperatableStateMachine.add('52',
+										TalkState(sentence_number=52),
+										transitions={'continue': '3', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:556 y:35
+			OperatableStateMachine.add('decide_talk',
+										DecideTalkState(),
+										transitions={'continue1': '51', 'continue2': '40', 'continue3': '53'},
+										autonomy={'continue1': Autonomy.Off, 'continue2': Autonomy.Off, 'continue3': Autonomy.Off})
+
+			# x:371 y:153
+			OperatableStateMachine.add('53',
+										TalkState(sentence_number=53),
+										transitions={'continue': '54', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:376 y:338
+			OperatableStateMachine.add('54',
+										TalkState(sentence_number=54),
+										transitions={'continue': '3', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+
+		# x:30 y:338, x:364 y:249
 		_sm_object_detection_till_face_nearby_2 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		with _sm_object_detection_till_face_nearby_2:
-			# x:167 y:58
-			OperatableStateMachine.add('obj det trk',
-										LaunchObjDetectAndTrack(),
-										transitions={'continue': 'strtdobj', 'failed': 'failed'},
+			# x:47 y:244
+			OperatableStateMachine.add('killfacegesture1',
+										KillFacialGesturesState(),
+										transitions={'continue': 'obj det trk', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:661 y:188
+			# x:798 y:215
 			OperatableStateMachine.add('chk person',
 										CheckConditionState(predicate=lambda person_message: person_message.data == "yes"),
-										transitions={'true': 'found face ', 'false': 'sub person'},
+										transitions={'true': 'decidetalk56', 'false': 'sub person'},
 										autonomy={'true': Autonomy.Off, 'false': Autonomy.Off},
 										remapping={'input_value': 'person_message'})
 
@@ -197,47 +236,71 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:495 y:37
+			# x:503 y:74
 			OperatableStateMachine.add('strtdobj',
 										TalkState(sentence_number=25),
 										transitions={'continue': 'sub person', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:697 y:303
+			# x:592 y:305
 			OperatableStateMachine.add('found face ',
 										TalkState(sentence_number=24),
 										transitions={'continue': 'stop obj trk', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:775 y:45
+			# x:908 y:45
 			OperatableStateMachine.add('sub person',
 										SubscriberState(topic='/is_person_nearby', blocking=True, clear=False),
 										transitions={'received': 'chk person', 'unavailable': 'chk person'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'person_message'})
 
-			# x:112 y:120
-			OperatableStateMachine.add('video stream',
-										LaunchVideoStream(vid_input_num=1),
-										transitions={'continue': 'face motor server', 'failed': 'failed'},
+			# x:288 y:30
+			OperatableStateMachine.add('decidetalk5',
+										DecideTalkState(),
+										transitions={'continue1': 'strtdobj', 'continue2': '61', 'continue3': '62'},
+										autonomy={'continue1': Autonomy.Off, 'continue2': Autonomy.Off, 'continue3': Autonomy.Off})
+
+			# x:503 y:148
+			OperatableStateMachine.add('61',
+										TalkState(sentence_number=61),
+										transitions={'continue': 'sub person', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:337 y:45
-			OperatableStateMachine.add('face motor server',
-										LaunchFaceServer(),
-										transitions={'continue': 'arduino_startup', 'failed': 'failed'},
+			# x:506 y:213
+			OperatableStateMachine.add('62',
+										TalkState(sentence_number=62),
+										transitions={'continue': 'sub person', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:658 y:250
-			OperatableStateMachine.add('23',
-										TalkState(sentence_number=23),
-										transitions={'continue': 'finished', 'failed': 'failed'},
+			# x:792 y:381
+			OperatableStateMachine.add('decidetalk56',
+										DecideTalkState(),
+										transitions={'continue1': 'found face ', 'continue2': '63t', 'continue3': '64t'},
+										autonomy={'continue1': Autonomy.Off, 'continue2': Autonomy.Off, 'continue3': Autonomy.Off})
+
+			# x:593 y:371
+			OperatableStateMachine.add('63t',
+										TalkState(sentence_number=63),
+										transitions={'continue': 'stop obj trk', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:623 y:99
-			OperatableStateMachine.add('arduino_startup',
-										LaunchArduinoLed(),
-										transitions={'continue': '23', 'failed': 'failed'},
+			# x:585 y:442
+			OperatableStateMachine.add('64t',
+										TalkState(sentence_number=64),
+										transitions={'continue': 'stop obj trk', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:102 y:77
+			OperatableStateMachine.add('startfacialgestures',
+										FacialGesturesState(),
+										transitions={'continue': 'decidetalk5', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:95 y:156
+			OperatableStateMachine.add('obj det trk',
+										LaunchObjDetectAndTrack(),
+										transitions={'continue': 'startfacialgestures', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 
@@ -245,11 +308,11 @@ class toilabinteractionSM(Behavior):
 		_sm_what_do_next_3 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		with _sm_what_do_next_3:
-			# x:30 y:40
-			OperatableStateMachine.add('t29',
-										TalkState(sentence_number=29),
-										transitions={'continue': 't30', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+			# x:322 y:25
+			OperatableStateMachine.add('decidetllk2',
+										DecideTalkState(),
+										transitions={'continue1': 't29', 'continue2': '57', 'continue3': '60'},
+										autonomy={'continue1': Autonomy.Off, 'continue2': Autonomy.Off, 'continue3': Autonomy.Off})
 
 			# x:30 y:132
 			OperatableStateMachine.add('t30',
@@ -269,6 +332,30 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
+			# x:582 y:225
+			OperatableStateMachine.add('57',
+										TalkState(sentence_number=57),
+										transitions={'continue': '59', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:99 y:34
+			OperatableStateMachine.add('59',
+										TalkState(sentence_number=59),
+										transitions={'continue': 't30', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:554 y:324
+			OperatableStateMachine.add('60',
+										TalkState(sentence_number=60),
+										transitions={'continue': '59', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:584 y:151
+			OperatableStateMachine.add('t29',
+										TalkState(sentence_number=29),
+										transitions={'continue': '59', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
 
 		# x:256 y:317, x:458 y:279
 		_sm_identify_4 = OperatableStateMachine(outcomes=['finished', 'failed'])
@@ -286,19 +373,19 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': 'identify', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:567 y:60
+			# x:587 y:33
 			OperatableStateMachine.add('identify',
 										IdentifyState(),
 										transitions={'continue': 't20', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:796 y:59
+			# x:807 y:28
 			OperatableStateMachine.add('t20',
 										TalkState(sentence_number=20),
 										transitions={'continue': 'w6', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:1019 y:66
+			# x:1045 y:34
 			OperatableStateMachine.add('w6',
 										WaitState(wait_time=6),
 										transitions={'done': 'subbb'},
@@ -311,26 +398,26 @@ class toilabinteractionSM(Behavior):
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'message_name'})
 
-			# x:811 y:167
+			# x:832 y:144
 			OperatableStateMachine.add('w1',
 										WaitState(wait_time=1),
-										transitions={'done': 'cchker'},
+										transitions={'done': 'cchker gal'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:940 y:173
-			OperatableStateMachine.add('cchker',
+			# x:1050 y:142
+			OperatableStateMachine.add('cchker gal',
 										WordCheckingStringState(key_word="Gal Moore"),
-										transitions={'found': 'f18', 'not_found': '19'},
+										transitions={'found': 'f18', 'not_found': 'chk2 coral'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
 										remapping={'input_value': 'message_name'})
 
-			# x:784 y:365
+			# x:842 y:225
 			OperatableStateMachine.add('f18',
 										TalkState(sentence_number=18),
-										transitions={'continue': 'stpfacetrk', 'failed': 'failed'},
+										transitions={'continue': '50 auth coplete', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:1020 y:362
+			# x:1042 y:737
 			OperatableStateMachine.add('19',
 										TalkState(sentence_number=19),
 										transitions={'continue': 'stpfacetrk', 'failed': 'failed'},
@@ -352,6 +439,64 @@ class toilabinteractionSM(Behavior):
 			OperatableStateMachine.add('stop identify',
 										StopIdentifyState(),
 										transitions={'continue': 'finished', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:1051 y:236
+			OperatableStateMachine.add('chk2 coral',
+										WordCheckingStringState(key_word="coral"),
+										transitions={'found': '47 coral', 'not_found': 'chek3 yona'},
+										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
+										remapping={'input_value': 'message_name'})
+
+			# x:1049 y:338
+			OperatableStateMachine.add('chek3 yona',
+										WordCheckingStringState(key_word="yona"),
+										transitions={'found': '48 yona', 'not_found': 'check4 yaeli'},
+										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
+										remapping={'input_value': 'message_name'})
+
+			# x:1061 y:445
+			OperatableStateMachine.add('check4 yaeli',
+										WordCheckingStringState(key_word="yaeli"),
+										transitions={'found': '49', 'not_found': 'chk zeev'},
+										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
+										remapping={'input_value': 'message_name'})
+
+			# x:645 y:373
+			OperatableStateMachine.add('50 auth coplete',
+										TalkState(sentence_number=50),
+										transitions={'continue': 'stpfacetrk', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:843 y:283
+			OperatableStateMachine.add('47 coral',
+										TalkState(sentence_number=47),
+										transitions={'continue': '50 auth coplete', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:841 y:356
+			OperatableStateMachine.add('48 yona',
+										TalkState(sentence_number=48),
+										transitions={'continue': '50 auth coplete', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:837 y:430
+			OperatableStateMachine.add('49',
+										TalkState(sentence_number=49),
+										transitions={'continue': '50 auth coplete', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:1047 y:555
+			OperatableStateMachine.add('chk zeev',
+										WordCheckingStringState(key_word="zeev"),
+										transitions={'found': 'zeev65', 'not_found': '19'},
+										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off},
+										remapping={'input_value': 'message_name'})
+
+			# x:841 y:519
+			OperatableStateMachine.add('zeev65',
+										TalkState(sentence_number=65),
+										transitions={'continue': '50 auth coplete', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 
@@ -424,18 +569,30 @@ class toilabinteractionSM(Behavior):
 			# x:118 y:83
 			OperatableStateMachine.add('stopdettrkface',
 										StopFaceDetectAndTrack(),
-										transitions={'continue': 'tlk33', 'failed': 'failed'},
+										transitions={'continue': 'decide_what_sy', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:570 y:190
-			OperatableStateMachine.add('tlk33',
-										TalkState(sentence_number=33),
-										transitions={'continue': '35', 'failed': 'failed'},
-										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:509 y:405
+			# x:439 y:266
 			OperatableStateMachine.add('35',
 										TalkState(sentence_number=35),
+										transitions={'continue': 'finished', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:475 y:80
+			OperatableStateMachine.add('decide_what_sy',
+										DecideTalkState(),
+										transitions={'continue1': '35', 'continue2': 'talk55', 'continue3': 'talk56'},
+										autonomy={'continue1': Autonomy.Off, 'continue2': Autonomy.Off, 'continue3': Autonomy.Off})
+
+			# x:651 y:272
+			OperatableStateMachine.add('talk55',
+										TalkState(sentence_number=55),
+										transitions={'continue': 'finished', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:260 y:221
+			OperatableStateMachine.add('talk56',
+										TalkState(sentence_number=56),
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
@@ -446,7 +603,7 @@ class toilabinteractionSM(Behavior):
 		with _sm_user_input_speech_7:
 			# x:105 y:65
 			OperatableStateMachine.add('calib',
-										SoundCalibState(length_of_calibration=20),
+										SoundCalibState(length_of_calibration=5),
 										transitions={'continue': 'read1', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
@@ -516,10 +673,10 @@ class toilabinteractionSM(Behavior):
 		_sm_face_det_and_start_interaction_ask_user_what_next_8 = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		with _sm_face_det_and_start_interaction_ask_user_what_next_8:
-			# x:64 y:61
+			# x:52 y:220
 			OperatableStateMachine.add('face det trk',
 										FaceDetTrack(),
-										transitions={'continue': 'tlk3', 'failed': 'failed'},
+										transitions={'continue': 'killfacialgestures', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:814 y:163
@@ -528,7 +685,7 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': 'finished', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:312 y:35
+			# x:326 y:31
 			OperatableStateMachine.add('tlk3',
 										TalkState(sentence_number=27),
 										transitions={'continue': 'talk4', 'failed': 'failed'},
@@ -550,6 +707,18 @@ class toilabinteractionSM(Behavior):
 			OperatableStateMachine.add('welcome',
 										TalkState(sentence_number=1),
 										transitions={'continue': 'tlk2', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:58 y:112
+			OperatableStateMachine.add('killfacialgestures',
+										KillFacialGesturesState(),
+										transitions={'continue': 'gesturesfacedet', 'failed': 'failed'},
+										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:145 y:36
+			OperatableStateMachine.add('gesturesfacedet',
+										FacialGesturesFaceDetState(),
+										transitions={'continue': 'tlk3', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
 
@@ -575,7 +744,7 @@ class toilabinteractionSM(Behavior):
 										transitions={'continue': '23', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:401 y:338
+			# x:466 y:484
 			OperatableStateMachine.add('23',
 										TalkState(sentence_number=23),
 										transitions={'continue': 'finished', 'failed': 'failed'},
@@ -596,7 +765,7 @@ class toilabinteractionSM(Behavior):
 										transitions={'finished': 'what do next', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:458 y:564
+			# x:454 y:512
 			OperatableStateMachine.add('user input speech',
 										_sm_user_input_speech_7,
 										transitions={'finished': 'finished', 'failed': 'failed', 'identification': 'identify', 'game': 'game', 'tracking': 'tracking', 'joke': 'joke'},
@@ -620,7 +789,7 @@ class toilabinteractionSM(Behavior):
 										transitions={'finished': 'object detection till face nearby', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:329 y:373
+			# x:288 y:423
 			OperatableStateMachine.add('what do next',
 										_sm_what_do_next_3,
 										transitions={'finished': 'user input speech', 'failed': 'failed'},
@@ -635,7 +804,7 @@ class toilabinteractionSM(Behavior):
 			# x:286 y:202
 			OperatableStateMachine.add('waking up',
 										_sm_waking_up_1,
-										transitions={'finished': 'what do next', 'failed': 'finished'},
+										transitions={'finished': 'tracking', 'failed': 'finished'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:739 y:488
